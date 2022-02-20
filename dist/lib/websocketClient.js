@@ -65,14 +65,14 @@ class WebsocketAPIClient {
                 const o = {
                     id: fill.orderId,
                     market: fill.symbol,
-                    type: fill.executionType,
-                    side: fill.side,
+                    type: fill.executionType.toLowerCase(),
+                    side: fill.side.toLowerCase(),
                     size: parseFloat(fill.orderSize),
                     price: parseFloat(fill.orderPrice),
                     reduceOnly: fill.settleType === 'CLOSE',
                     ioc: false,
                     postOnly: fill.timeInForce === 'SOK',
-                    status: '',
+                    status: parseFloat(fill.orderSize) - parseFloat(fill.orderExecutedSize) < 0.00001 ? 'closed' : 'open',
                     filledSize: parseFloat(fill.orderExecutedSize),
                     remainingSize: parseFloat(fill.orderSize) - parseFloat(fill.orderExecutedSize),
                     avgFillPrice: parseFloat(fill.executionPrice),
@@ -86,8 +86,8 @@ class WebsocketAPIClient {
                 const o = {
                     id: order.orderId,
                     market: order.symbol,
-                    type: order.executionType,
-                    side: order.side,
+                    type: order.executionType.toLowerCase(),
+                    side: order.side.toLowerCase(),
                     size: parseFloat(order.orderSize),
                     price: parseFloat(order.orderPrice),
                     reduceOnly: order.settleType === 'CLOSE',
@@ -125,8 +125,8 @@ class WebsocketAPIClient {
     Start() {
         return __awaiter(this, void 0, void 0, function* () {
             const rdb = yield (0, my_utils_1.getRealTimeDatabase)();
-            this.apiKey = (yield rdb.get(yield rdb.getReference('settings/gmo/' + this.account + '/apiKey')));
-            this.apiSecret = (yield rdb.get(yield rdb.getReference('settings/gmo/' + this.account + '/apiSecret')));
+            this.apiKey = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')));
+            this.apiSecret = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')));
             this.privateStream = new private_stream_1.gmoPrivateStreamAPIClass(this.apiKey, this.apiSecret, {
                 reconnect: true,
                 execution: this.onFill,

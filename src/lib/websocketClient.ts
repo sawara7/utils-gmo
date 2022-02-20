@@ -106,8 +106,8 @@ export class WebsocketAPIClient {
 
     async Start() {
         const rdb = await getRealTimeDatabase()
-        this.apiKey = await rdb.get(await rdb.getReference('settings/gmo/' + this.account + '/apiKey')) as string
-        this.apiSecret = await rdb.get(await rdb.getReference('settings/gmo/' + this.account + '/apiSecret')) as string
+        this.apiKey = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')) as string
+        this.apiSecret = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')) as string
         
         this.privateStream = new gmoPrivateStreamClass(
             this.apiKey, this.apiSecret, {
@@ -179,14 +179,14 @@ export class WebsocketAPIClient {
             const o: wsOrder = {
                 id: fill.orderId,
                 market: fill.symbol,
-                type: fill.executionType,
-                side: fill.side,
+                type: fill.executionType.toLowerCase(),
+                side: fill.side.toLowerCase(),
                 size: parseFloat(fill.orderSize),
                 price: parseFloat(fill.orderPrice),
                 reduceOnly: fill.settleType === 'CLOSE',
                 ioc: false,
                 postOnly: fill.timeInForce === 'SOK',
-                status: '',
+                status: parseFloat(fill.orderSize) - parseFloat(fill.orderExecutedSize) < 0.00001 ? 'closed': 'open',
                 filledSize: parseFloat(fill.orderExecutedSize),
                 remainingSize: parseFloat(fill.orderSize) - parseFloat(fill.orderExecutedSize),
                 avgFillPrice: parseFloat(fill.executionPrice),
@@ -202,8 +202,8 @@ export class WebsocketAPIClient {
             const o: wsOrder = {
                 id: order.orderId,
                 market: order.symbol,
-                type: order.executionType,
-                side: order.side,
+                type: order.executionType.toLowerCase(),
+                side: order.side.toLowerCase(),
                 size: parseFloat(order.orderSize),
                 price: parseFloat(order.orderPrice),
                 reduceOnly: order.settleType === 'CLOSE',
