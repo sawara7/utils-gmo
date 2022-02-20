@@ -107,7 +107,7 @@ export class WebsocketAPIClient {
     async Start() {
         const rdb = await getRealTimeDatabase()
         this.apiKey = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')) as string
-        this.apiSecret = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.apiSecret + '/apiSecret')) as string
+        this.apiSecret = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')) as string
         
         this.privateStream = new gmoPrivateStreamClass(
             this.apiKey, this.apiSecret, {

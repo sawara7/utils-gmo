@@ -126,7 +126,7 @@ class WebsocketAPIClient {
         return __awaiter(this, void 0, void 0, function* () {
             const rdb = yield (0, my_utils_1.getRealTimeDatabase)();
             this.apiKey = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')));
-            this.apiSecret = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.apiSecret + '/apiSecret')));
+            this.apiSecret = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')));
             this.privateStream = new private_stream_1.gmoPrivateStreamAPIClass(this.apiKey, this.apiSecret, {
                 reconnect: true,
                 execution: this.onFill,
