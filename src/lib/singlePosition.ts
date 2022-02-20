@@ -56,7 +56,7 @@ export class SinglePosition {
     private _openTime: number = 0
     private _closeTime: number = 0
     private _isLosscut: boolean = false;
-    private _openSide: OrderSide = 'BUY'
+    private _openSide: OrderSide = 'buy'
     private _currentOpenPrice: number = 0
     private _currentClosePrice: number = 0
     private _sizeResolution: number
@@ -103,8 +103,8 @@ export class SinglePosition {
         price?: number, postOnly?: boolean): Promise<gmoResponse<string>> {
         const p: PostOrderRequest = {
             symbol: this._marketName,
-            side: side,
-            executionType: type,
+            side: side.toUpperCase(),
+            executionType: type.toUpperCase(),
             size: this.roundSize(size).toString()
         }
         if (price) {
@@ -163,14 +163,14 @@ export class SinglePosition {
         if (!this._openOrderSettings) {
             return {success: false, message:'No open order settings.'}
         }
-        if (this._openOrderSettings.type === 'LIMIT') {
+        if (this._openOrderSettings.type === 'limit') {
             return await this.openLimit(
                 this._openOrderSettings.side,
                 this._openOrderSettings.price,
                 this._openOrderSettings.postOnly,
                 this._openOrderSettings.cancelSec || 0
                 )
-        } else if (this._openOrderSettings.type === 'MARKET')  {
+        } else if (this._openOrderSettings.type === 'market')  {
             return await this.openMarket(
                 this._openOrderSettings.side,
                 this._openOrderSettings.price
@@ -183,13 +183,13 @@ export class SinglePosition {
         if (!this._closeOrderSettings) {
             return {success: false, message:'No close order settings.'}
         }
-        if (this._closeOrderSettings.type === 'LIMIT') {
+        if (this._closeOrderSettings.type === 'limit') {
             return await this.closeLimit(
                 this._closeOrderSettings.price,
                 this._closeOrderSettings.postOnly,
                 this._closeOrderSettings.cancelSec || 0
                 )
-        } else if (this._closeOrderSettings.type === 'MARKET')  {
+        } else if (this._closeOrderSettings.type === 'market')  {
             return await this.closeMarket()
         }
         return {success: false, message:'Close Failed.'}
@@ -204,7 +204,7 @@ export class SinglePosition {
         }
         this._openID = 1 // lock
         try {
-            const res = await this.placeOrder(false, side, 'MARKET', this._funds/price)
+            const res = await this.placeOrder(false, side, 'market', this._funds/price)
             this.setOpen(res, side)
             result.success = true
         } catch(e) {
@@ -214,7 +214,7 @@ export class SinglePosition {
         return result
     }
 
-    public async openLimit(side: 'BUY' | 'SELL', price: number, postOnly: boolean = true, cancelSec: number = 0): Promise<SinglePositionResponse> {
+    public async openLimit(side: 'buy' | 'sell', price: number, postOnly: boolean = true, cancelSec: number = 0): Promise<SinglePositionResponse> {
         if (this._openID > 0) {
             return {success: false, message:'Position is already opened.'}
         }
@@ -223,7 +223,7 @@ export class SinglePosition {
         }
         this._openID = 1 // lock
         try {
-            const res = await this.placeOrder(false, side, 'LIMIT', this._funds/price, price, postOnly)
+            const res = await this.placeOrder(false,  side, 'limit', this._funds/price, price, postOnly)
             this.setOpen(res, side)
             result.success = true
             if (cancelSec > 0) {
@@ -251,8 +251,8 @@ export class SinglePosition {
         try {
             const res = await this.placeOrder(
                 true,
-                this._openSide === 'BUY'? 'SELL': 'BUY',
-                'MARKET',
+                this._openSide === 'buy'? 'sell': 'buy',
+                'market',
                 this._currentSize)
             this.setClose(res)
             result.success = true
@@ -274,8 +274,8 @@ export class SinglePosition {
         try {
             const res = await this.placeOrder(
                 true,
-                this._openSide === 'BUY'? 'SELL': 'BUY',
-                'LIMIT',
+                this._openSide === 'buy'? 'sell': 'buy',
+                'limit',
                 this._currentSize,
                 price,
                 postOnly)
@@ -344,7 +344,7 @@ export class SinglePosition {
                     this._isLosscut = false
                 }
                 this._cumulativeProfit += this._initialSize * 
-                    (this._openSide === 'BUY' ?
+                    (this._openSide === 'buy' ?
                         (this._currentClosePrice - this._currentOpenPrice):
                         (this._currentOpenPrice - this._currentClosePrice)
                     )

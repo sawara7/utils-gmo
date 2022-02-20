@@ -21,7 +21,7 @@ class SinglePosition {
         this._openTime = 0;
         this._closeTime = 0;
         this._isLosscut = false;
-        this._openSide = 'BUY';
+        this._openSide = 'buy';
         this._currentOpenPrice = 0;
         this._currentClosePrice = 0;
         // Information
@@ -54,8 +54,8 @@ class SinglePosition {
         return __awaiter(this, void 0, void 0, function* () {
             const p = {
                 symbol: this._marketName,
-                side: side,
-                executionType: type,
+                side: side.toUpperCase(),
+                executionType: type.toUpperCase(),
                 size: this.roundSize(size).toString()
             };
             if (price) {
@@ -115,10 +115,10 @@ class SinglePosition {
             if (!this._openOrderSettings) {
                 return { success: false, message: 'No open order settings.' };
             }
-            if (this._openOrderSettings.type === 'LIMIT') {
+            if (this._openOrderSettings.type === 'limit') {
                 return yield this.openLimit(this._openOrderSettings.side, this._openOrderSettings.price, this._openOrderSettings.postOnly, this._openOrderSettings.cancelSec || 0);
             }
-            else if (this._openOrderSettings.type === 'MARKET') {
+            else if (this._openOrderSettings.type === 'market') {
                 return yield this.openMarket(this._openOrderSettings.side, this._openOrderSettings.price);
             }
             return { success: false, message: 'Open Failed.' };
@@ -129,10 +129,10 @@ class SinglePosition {
             if (!this._closeOrderSettings) {
                 return { success: false, message: 'No close order settings.' };
             }
-            if (this._closeOrderSettings.type === 'LIMIT') {
+            if (this._closeOrderSettings.type === 'limit') {
                 return yield this.closeLimit(this._closeOrderSettings.price, this._closeOrderSettings.postOnly, this._closeOrderSettings.cancelSec || 0);
             }
-            else if (this._closeOrderSettings.type === 'MARKET') {
+            else if (this._closeOrderSettings.type === 'market') {
                 return yield this.closeMarket();
             }
             return { success: false, message: 'Close Failed.' };
@@ -148,7 +148,7 @@ class SinglePosition {
             };
             this._openID = 1; // lock
             try {
-                const res = yield this.placeOrder(false, side, 'MARKET', this._funds / price);
+                const res = yield this.placeOrder(false, side, 'market', this._funds / price);
                 this.setOpen(res, side);
                 result.success = true;
             }
@@ -169,7 +169,7 @@ class SinglePosition {
             };
             this._openID = 1; // lock
             try {
-                const res = yield this.placeOrder(false, side, 'LIMIT', this._funds / price, price, postOnly);
+                const res = yield this.placeOrder(false, side, 'limit', this._funds / price, price, postOnly);
                 this.setOpen(res, side);
                 result.success = true;
                 if (cancelSec > 0) {
@@ -197,7 +197,7 @@ class SinglePosition {
             };
             this._closeID = 1; // lock
             try {
-                const res = yield this.placeOrder(true, this._openSide === 'BUY' ? 'SELL' : 'BUY', 'MARKET', this._currentSize);
+                const res = yield this.placeOrder(true, this._openSide === 'buy' ? 'sell' : 'buy', 'market', this._currentSize);
                 this.setClose(res);
                 result.success = true;
             }
@@ -218,7 +218,7 @@ class SinglePosition {
             };
             this._closeID = 1;
             try {
-                const res = yield this.placeOrder(true, this._openSide === 'BUY' ? 'SELL' : 'BUY', 'LIMIT', this._currentSize, price, postOnly);
+                const res = yield this.placeOrder(true, this._openSide === 'buy' ? 'sell' : 'buy', 'limit', this._currentSize, price, postOnly);
                 this.setClose(res);
                 result.success = true;
                 if (cancelSec > 0) {
@@ -282,7 +282,7 @@ class SinglePosition {
                     this._isLosscut = false;
                 }
                 this._cumulativeProfit += this._initialSize *
-                    (this._openSide === 'BUY' ?
+                    (this._openSide === 'buy' ?
                         (this._currentClosePrice - this._currentOpenPrice) :
                         (this._currentOpenPrice - this._currentClosePrice));
                 this._initialSize = 0;
