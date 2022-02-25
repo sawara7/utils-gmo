@@ -110,16 +110,16 @@ class SinglePosition {
     resetClose() {
         this._closeID = 0;
     }
-    open() {
+    open(isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._openOrderSettings) {
                 return { success: false, message: 'No open order settings.' };
             }
             if (this._openOrderSettings.type === 'limit') {
-                return yield this.openLimit(this._openOrderSettings.side, this._openOrderSettings.price, this._openOrderSettings.postOnly, this._openOrderSettings.cancelSec || 0);
+                return yield this.openLimit(this._openOrderSettings.side, this._openOrderSettings.price, this._openOrderSettings.postOnly, this._openOrderSettings.cancelSec || 0, isClose);
             }
             else if (this._openOrderSettings.type === 'market') {
-                return yield this.openMarket(this._openOrderSettings.side, this._openOrderSettings.price);
+                return yield this.openMarket(this._openOrderSettings.side, this._openOrderSettings.price, isClose);
             }
             return { success: false, message: 'Open Failed.' };
         });
@@ -138,7 +138,7 @@ class SinglePosition {
             return { success: false, message: 'Close Failed.' };
         });
     }
-    openMarket(side, price) {
+    openMarket(side, price, isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._openID > 0) {
                 return { success: false, message: 'Position is already opened.' };
@@ -148,7 +148,7 @@ class SinglePosition {
             };
             this._openID = 1; // lock
             try {
-                const res = yield this.placeOrder(false, side, 'market', this._funds / price);
+                const res = yield this.placeOrder(isClose, side, 'market', this._funds / price);
                 this.setOpen(res, side);
                 result.success = true;
             }
@@ -159,7 +159,7 @@ class SinglePosition {
             return result;
         });
     }
-    openLimit(side, price, postOnly = true, cancelSec = 0) {
+    openLimit(side, price, postOnly = true, cancelSec = 0, isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._openID > 0) {
                 return { success: false, message: 'Position is already opened.' };
@@ -169,7 +169,7 @@ class SinglePosition {
             };
             this._openID = 1; // lock
             try {
-                const res = yield this.placeOrder(false, side, 'limit', this._funds / price, price, postOnly);
+                const res = yield this.placeOrder(isClose, side, 'limit', this._funds / price, price, postOnly);
                 this.setOpen(res, side);
                 result.success = true;
                 if (cancelSec > 0) {

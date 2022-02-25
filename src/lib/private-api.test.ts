@@ -15,14 +15,14 @@ import { getGMOPrivateAPI } from ".."
     // }
     let res = (await api.cancelBulkOrder({
         symbols: ['XRP_JPY'],
-        side: 'SELL'
+        side: 'BUY'
     }))
     console.log(res)
     while (res && res.data.length > 0) {
         await sleep(300)
         res = (await api.cancelBulkOrder({
             symbols: ['XRP_JPY'],
-            side: 'SELL'
+            side: 'BUY'
         }))
         console.log(res)
     }

@@ -159,7 +159,7 @@ export class SinglePosition {
         this._closeID = 0
     }
 
-    public async open(): Promise<SinglePositionResponse> {
+    public async open(isClose: boolean): Promise<SinglePositionResponse> {
         if (!this._openOrderSettings) {
             return {success: false, message:'No open order settings.'}
         }
@@ -168,12 +168,14 @@ export class SinglePosition {
                 this._openOrderSettings.side,
                 this._openOrderSettings.price,
                 this._openOrderSettings.postOnly,
-                this._openOrderSettings.cancelSec || 0
+                this._openOrderSettings.cancelSec || 0,
+                isClose
                 )
         } else if (this._openOrderSettings.type === 'market')  {
             return await this.openMarket(
                 this._openOrderSettings.side,
-                this._openOrderSettings.price
+                this._openOrderSettings.price,
+                isClose
                 )
         }
         return {success: false, message:'Open Failed.'}
@@ -195,7 +197,7 @@ export class SinglePosition {
         return {success: false, message:'Close Failed.'}
     }
 
-    public async openMarket(side: OrderSide, price: number): Promise<SinglePositionResponse> {
+    public async openMarket(side: OrderSide, price: number, isClose: boolean): Promise<SinglePositionResponse> {
         if (this._openID > 0) {
             return {success: false, message:'Position is already opened.'}
         }
@@ -204,7 +206,7 @@ export class SinglePosition {
         }
         this._openID = 1 // lock
         try {
-            const res = await this.placeOrder(false, side, 'market', this._funds/price)
+            const res = await this.placeOrder(isClose, side, 'market', this._funds/price)
             this.setOpen(res, side)
             result.success = true
         } catch(e) {
@@ -214,7 +216,7 @@ export class SinglePosition {
         return result
     }
 
-    public async openLimit(side: 'buy' | 'sell', price: number, postOnly: boolean = true, cancelSec: number = 0): Promise<SinglePositionResponse> {
+    public async openLimit(side: 'buy' | 'sell', price: number, postOnly: boolean = true, cancelSec: number = 0, isClose: boolean): Promise<SinglePositionResponse> {
         if (this._openID > 0) {
             return {success: false, message:'Position is already opened.'}
         }
@@ -223,7 +225,7 @@ export class SinglePosition {
         }
         this._openID = 1 // lock
         try {
-            const res = await this.placeOrder(false,  side, 'limit', this._funds/price, price, postOnly)
+            const res = await this.placeOrder(isClose,  side, 'limit', this._funds/price, price, postOnly)
             this.setOpen(res, side)
             result.success = true
             if (cancelSec > 0) {

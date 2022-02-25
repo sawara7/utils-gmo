@@ -58,10 +58,10 @@ export declare class SinglePosition {
     private setClose;
     private resetOpen;
     private resetClose;
-    open(): Promise<SinglePositionResponse>;
+    open(isClose: boolean): Promise<SinglePositionResponse>;
     close(): Promise<SinglePositionResponse>;
-    openMarket(side: OrderSide, price: number): Promise<SinglePositionResponse>;
-    openLimit(side: 'buy' | 'sell', price: number, postOnly?: boolean, cancelSec?: number): Promise<SinglePositionResponse>;
+    openMarket(side: OrderSide, price: number, isClose: boolean): Promise<SinglePositionResponse>;
+    openLimit(side: 'buy' | 'sell', price: number, postOnly: boolean | undefined, cancelSec: number | undefined, isClose: boolean): Promise<SinglePositionResponse>;
     closeMarket(): Promise<SinglePositionResponse>;
     closeLimit(price: number, postOnly?: boolean, cancelSec?: number): Promise<SinglePositionResponse>;
     updateTicker(ticker: wsTicker): void;

@@ -25,14 +25,14 @@ const __1 = require("..");
     // }
     let res = (yield api.cancelBulkOrder({
         symbols: ['XRP_JPY'],
-        side: 'SELL'
+        side: 'BUY'
     }));
     console.log(res);
     while (res && res.data.length > 0) {
         yield (0, my_utils_1.sleep)(300);
         res = (yield api.cancelBulkOrder({
             symbols: ['XRP_JPY'],
-            side: 'SELL'
+            side: 'BUY'
         }));
         console.log(res);
     }
