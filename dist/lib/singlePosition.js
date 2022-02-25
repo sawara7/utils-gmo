@@ -124,7 +124,7 @@ class SinglePosition {
             return { success: false, message: 'Open Failed.' };
         });
     }
-    close() {
+    close(isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._closeOrderSettings) {
                 return { success: false, message: 'No close order settings.' };
@@ -133,7 +133,7 @@ class SinglePosition {
                 return yield this.closeLimit(this._closeOrderSettings.price, this._closeOrderSettings.postOnly, this._closeOrderSettings.cancelSec || 0);
             }
             else if (this._closeOrderSettings.type === 'market') {
-                return yield this.closeMarket();
+                return yield this.closeMarket(isClose);
             }
             return { success: false, message: 'Close Failed.' };
         });
@@ -187,7 +187,7 @@ class SinglePosition {
             return result;
         });
     }
-    closeMarket() {
+    closeMarket(isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._closeID > 0) {
                 return { success: false, message: 'Position is already closed.' };
@@ -197,7 +197,7 @@ class SinglePosition {
             };
             this._closeID = 1; // lock
             try {
-                const res = yield this.placeOrder(true, this._openSide === 'buy' ? 'sell' : 'buy', 'market', this._currentSize);
+                const res = yield this.placeOrder(isClose, this._openSide === 'buy' ? 'sell' : 'buy', 'market', this._currentSize);
                 this.setClose(res);
                 result.success = true;
             }
@@ -274,7 +274,7 @@ class SinglePosition {
                 }
             }
             if (this._isLosscut && this._currentSize > 0) {
-                this.closeMarket();
+                this.closeMarket(true);
             }
             if (filled === size) {
                 if (this._isLosscut) {

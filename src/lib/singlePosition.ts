@@ -181,7 +181,7 @@ export class SinglePosition {
         return {success: false, message:'Open Failed.'}
     }
 
-    public async close(): Promise<SinglePositionResponse> {
+    public async close(isClose: boolean): Promise<SinglePositionResponse> {
         if (!this._closeOrderSettings) {
             return {success: false, message:'No close order settings.'}
         }
@@ -192,7 +192,7 @@ export class SinglePosition {
                 this._closeOrderSettings.cancelSec || 0
                 )
         } else if (this._closeOrderSettings.type === 'market')  {
-            return await this.closeMarket()
+            return await this.closeMarket(isClose)
         }
         return {success: false, message:'Close Failed.'}
     }
@@ -242,7 +242,7 @@ export class SinglePosition {
         return result
     }
 
-    public async closeMarket(): Promise<SinglePositionResponse> {
+    public async closeMarket(isClose: boolean): Promise<SinglePositionResponse> {
         if (this._closeID > 0) {
             return {success: false, message:'Position is already closed.'}
         }
@@ -252,7 +252,7 @@ export class SinglePosition {
         this._closeID = 1 // lock
         try {
             const res = await this.placeOrder(
-                true,
+                isClose,
                 this._openSide === 'buy'? 'sell': 'buy',
                 'market',
                 this._currentSize)
@@ -337,7 +337,7 @@ export class SinglePosition {
             }
 
             if (this._isLosscut && this._currentSize > 0) {
-                this.closeMarket()
+                this.closeMarket(true)
             }
 
             if (filled === size) {
