@@ -130,7 +130,7 @@ class SinglePosition {
                 return { success: false, message: 'No close order settings.' };
             }
             if (this._closeOrderSettings.type === 'limit') {
-                return yield this.closeLimit(this._closeOrderSettings.price, this._closeOrderSettings.postOnly, this._closeOrderSettings.cancelSec || 0);
+                return yield this.closeLimit(this._closeOrderSettings.price, this._closeOrderSettings.postOnly, this._closeOrderSettings.cancelSec || 0, isClose);
             }
             else if (this._closeOrderSettings.type === 'market') {
                 return yield this.closeMarket(isClose);
@@ -208,7 +208,7 @@ class SinglePosition {
             return result;
         });
     }
-    closeLimit(price, postOnly = true, cancelSec = 0) {
+    closeLimit(price, postOnly = true, cancelSec = 0, isClose) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._closeID > 0) {
                 return { success: false, message: 'Position is already closed.' };
@@ -218,7 +218,7 @@ class SinglePosition {
             };
             this._closeID = 1;
             try {
-                const res = yield this.placeOrder(true, this._openSide === 'buy' ? 'sell' : 'buy', 'limit', this._currentSize, price, postOnly);
+                const res = yield this.placeOrder(isClose, this._openSide === 'buy' ? 'sell' : 'buy', 'limit', this._currentSize, price, postOnly);
                 this.setClose(res);
                 result.success = true;
                 if (cancelSec > 0) {

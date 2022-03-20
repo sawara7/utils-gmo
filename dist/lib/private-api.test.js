@@ -23,17 +23,20 @@ const __1 = require("..");
     //         price: '100'
     //     })
     // }
-    let res = (yield api.cancelBulkOrder({
-        symbols: ['XRP_JPY'],
-        side: 'BUY'
-    }));
-    console.log(res);
-    while (res && res.data.length > 0) {
-        yield (0, my_utils_1.sleep)(300);
-        res = (yield api.cancelBulkOrder({
+    for (const s of ['BUY', 'SELL']) {
+        let res = (yield api.cancelBulkOrder({
             symbols: ['XRP_JPY'],
-            side: 'BUY'
+            side: s
         }));
         console.log(res);
+        while (res && res.data.length > 0) {
+            yield (0, my_utils_1.sleep)(500);
+            res = (yield api.cancelBulkOrder({
+                symbols: ['XRP_JPY'],
+                side: s
+            }));
+            console.log(res);
+        }
+        console.log("end: " + s);
     }
 }))();

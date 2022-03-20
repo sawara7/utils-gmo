@@ -13,17 +13,20 @@ import { getGMOPrivateAPI } from ".."
     //         price: '100'
     //     })
     // }
-    let res = (await api.cancelBulkOrder({
-        symbols: ['XRP_JPY'],
-        side: 'BUY'
-    }))
-    console.log(res)
-    while (res && res.data.length > 0) {
-        await sleep(300)
-        res = (await api.cancelBulkOrder({
+    for (const s of ['BUY', 'SELL']) {
+        let res = (await api.cancelBulkOrder({
             symbols: ['XRP_JPY'],
-            side: 'BUY'
+            side: s
         }))
         console.log(res)
+        while (res && res.data.length > 0) {
+            await sleep(500)
+            res = (await api.cancelBulkOrder({
+                symbols: ['XRP_JPY'],
+                side: s
+            }))
+            console.log(res)
+        }
+        console.log("end: " + s)
     }
 })()

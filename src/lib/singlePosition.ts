@@ -189,7 +189,8 @@ export class SinglePosition {
             return await this.closeLimit(
                 this._closeOrderSettings.price,
                 this._closeOrderSettings.postOnly,
-                this._closeOrderSettings.cancelSec || 0
+                this._closeOrderSettings.cancelSec || 0,
+                isClose
                 )
         } else if (this._closeOrderSettings.type === 'market')  {
             return await this.closeMarket(isClose)
@@ -265,7 +266,7 @@ export class SinglePosition {
         return result
     }
 
-    public async closeLimit(price: number, postOnly: boolean = true, cancelSec: number = 0): Promise<SinglePositionResponse> {
+    public async closeLimit(price: number, postOnly: boolean = true, cancelSec: number = 0, isClose: boolean): Promise<SinglePositionResponse> {
         if (this._closeID > 0) {
             return {success: false, message:'Position is already closed.'}
         }
@@ -275,7 +276,7 @@ export class SinglePosition {
         this._closeID = 1
         try {
             const res = await this.placeOrder(
-                true,
+                isClose,
                 this._openSide === 'buy'? 'sell': 'buy',
                 'limit',
                 this._currentSize,
