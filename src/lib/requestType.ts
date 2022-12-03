@@ -30,7 +30,7 @@ export interface PostOrderRequest extends BasePostOrderRequest {
 
 export interface SettlePositionType {
   positionId: number;
-  size: number;
+  size: string;
 }
 
 export interface PostCloseOrderRequest extends BasePostOrderRequest {
@@ -58,3 +58,8 @@ export interface GetActiveOrderRequest {
   count: number;
 }
 
+export interface GetKLinesRequest {
+  symbol: string;
+  interval: string;
+  date: string;
+}

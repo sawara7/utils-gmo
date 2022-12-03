@@ -8,12 +8,14 @@ import {
 import {
   GetTickerRequest,
   GetOrderbooksRequest,
-  GetTradesRequest
+  GetTradesRequest,
+  GetKLinesRequest
 } from './requestType';
 import {
   gmoResponse,
   gmoStatusResponse,
   gmoTickerResponse,
+  KLine,
   OrderbooksResponse,
   TradesResponse
 } from './responseType';
@@ -43,6 +45,11 @@ export class gmoPublicApiClass extends baseApiClass {
 
   public getTrades(params: GetTradesRequest): Promise<gmoResponse<TradesResponse>> {
     const path = '/trades';
+    return this.get(path, params);
+  }
+
+  public getKLines(params: GetKLinesRequest): Promise<gmoResponse<KLine[]>> {
+    const path = '/klines';
     return this.get(path, params);
   }
 }

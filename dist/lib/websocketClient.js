@@ -18,14 +18,13 @@ class WebsocketAPIClient {
         this.isError = false;
         this.subscribeOrder = true;
         this.onPrivateStreamOpen = () => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
-            (_a = this.notifier) === null || _a === void 0 ? void 0 : _a.sendMessage("Private Stream Open");
+            var _a, _b;
             this.isError = false;
             yield (0, my_utils_1.sleep)(1000);
             if (!this.isError) {
                 if (this.subscribeOrder) {
-                    (_b = this.privateStream) === null || _b === void 0 ? void 0 : _b.subscribe("executionEvents");
-                    (_c = this.privateStream) === null || _c === void 0 ? void 0 : _c.subscribe("orderEvents");
+                    (_a = this.privateStream) === null || _a === void 0 ? void 0 : _a.subscribe("executionEvents");
+                    (_b = this.privateStream) === null || _b === void 0 ? void 0 : _b.subscribe("orderEvents");
                 }
                 if (this.onClientStart) {
                     this.onClientStart();
@@ -38,27 +37,18 @@ class WebsocketAPIClient {
             }
         });
         this.onPrivateStreamClose = () => __awaiter(this, void 0, void 0, function* () {
-            var _d;
-            (_d = this.notifier) === null || _d === void 0 ? void 0 : _d.sendMessage("Private Stream Close");
         });
         this.onPrivateStreamError = () => __awaiter(this, void 0, void 0, function* () {
-            var _e;
-            (_e = this.notifier) === null || _e === void 0 ? void 0 : _e.sendMessage("Private Stream Error");
         });
         this.onPublicStreamOpen = () => __awaiter(this, void 0, void 0, function* () {
-            var _f, _g;
-            (_f = this.notifier) === null || _f === void 0 ? void 0 : _f.sendMessage("Public Stream Open");
+            var _c;
             for (const m of this.tickerSymbols) {
-                (_g = this.publicStream) === null || _g === void 0 ? void 0 : _g.subscribe('ticker', m);
+                (_c = this.publicStream) === null || _c === void 0 ? void 0 : _c.subscribe('ticker', m);
             }
         });
         this.onPublicStreamClose = () => __awaiter(this, void 0, void 0, function* () {
-            var _h;
-            (_h = this.notifier) === null || _h === void 0 ? void 0 : _h.sendMessage("Public Stream Close");
         });
         this.onPublicStreamError = () => __awaiter(this, void 0, void 0, function* () {
-            var _j;
-            (_j = this.notifier) === null || _j === void 0 ? void 0 : _j.sendMessage("Public Stream Error");
         });
         this.onFill = (fill) => {
             if (this.onClientOrder) {
@@ -113,10 +103,11 @@ class WebsocketAPIClient {
                 this.onClientTicker(t);
             }
         };
-        this.notifier = params.notifier;
         this.subscribeOrder = params.subscribeOrder;
         this.tickerSymbols = params.tickerSymbols;
         this.account = params.account;
+        this.apiKey = params.apiSettings.apiKey;
+        this.apiSecret = params.apiSettings.apiSecret;
         this.onClientStart = params.onClientStart;
         this.onClientError = params.onClientError;
         this.onClientOrder = params.onClientOrder;
@@ -124,9 +115,6 @@ class WebsocketAPIClient {
     }
     Start() {
         return __awaiter(this, void 0, void 0, function* () {
-            const rdb = yield (0, my_utils_1.getRealTimeDatabase)();
-            this.apiKey = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')));
-            this.apiSecret = (yield rdb.get(yield rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')));
             this.privateStream = new private_stream_1.gmoPrivateStreamAPIClass(this.apiKey, this.apiSecret, {
                 reconnect: true,
                 execution: this.onFill,

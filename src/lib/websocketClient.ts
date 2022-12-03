@@ -1,5 +1,4 @@
 import {
-    getRealTimeDatabase,
     sleep
 } from "my-utils"
 
@@ -11,11 +10,8 @@ import {
     gmoPublicStreamClass
 } from "./public-stream"
 
-import {
-    SlackNotifier
-} from "slack-notification"
 import { gmoPrivateStreamExecutionResponse, gmoPrivateStreamOrderResponse, gmoPublicStreamTickerResponse } from ".."
-import { gmoPair } from "./type"
+import { GMOApiConfig, gmoPair } from "./type"
 
 
 export interface wsTrade {
@@ -69,7 +65,7 @@ export interface wsOrder {
 }
 
 export interface WebsocketAPIClientParams {
-    notifier?: SlackNotifier,
+    apiSettings: GMOApiConfig
     subscribeOrder: boolean,
     tickerSymbols: gmoPair[],
     account: string,
@@ -81,23 +77,23 @@ export interface WebsocketAPIClientParams {
 
 export class WebsocketAPIClient {
     private isError: boolean = false
-    private apiKey?: string
-    private apiSecret?: string
+    private apiKey: string
+    private apiSecret: string
     private privateStream?: gmoPrivateStreamClass
     private publicStream?: gmoPublicStreamClass
     private account?: string
     private tickerSymbols: gmoPair[]
     private subscribeOrder: boolean = true
-    private notifier?: SlackNotifier
     private onClientStart?: ()=>void
     private onClientError?: ()=>void
     private onClientOrder?: (order: wsOrder)=>void
     private onClientTicker?: (ticker: wsTicker)=> void
     constructor(params: WebsocketAPIClientParams) {
-        this.notifier = params.notifier
         this.subscribeOrder = params.subscribeOrder
         this.tickerSymbols = params.tickerSymbols
         this.account = params.account
+        this.apiKey = params.apiSettings.apiKey
+        this.apiSecret = params.apiSettings.apiSecret
         this.onClientStart = params.onClientStart 
         this.onClientError = params.onClientError
         this.onClientOrder = params.onClientOrder
@@ -105,10 +101,6 @@ export class WebsocketAPIClient {
     }
 
     async Start() {
-        const rdb = await getRealTimeDatabase()
-        this.apiKey = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiKey')) as string
-        this.apiSecret = await rdb.get(await rdb.getReference('settings/gmo/accounts/' + this.account + '/apiSecret')) as string
-        
         this.privateStream = new gmoPrivateStreamClass(
             this.apiKey, this.apiSecret, {
             reconnect: true,
@@ -133,7 +125,6 @@ export class WebsocketAPIClient {
     }
 
     private onPrivateStreamOpen = async () => {
-        this.notifier?.sendMessage("Private Stream Open")
         this.isError = false
         await sleep(1000)
         if (!this.isError) {
@@ -152,26 +143,21 @@ export class WebsocketAPIClient {
     }
 
     private onPrivateStreamClose = async () => {
-        this.notifier?.sendMessage("Private Stream Close")
     }
 
     private onPrivateStreamError = async () => {
-        this.notifier?.sendMessage("Private Stream Error")
     }
 
     private onPublicStreamOpen = async () => {
-        this.notifier?.sendMessage("Public Stream Open")
         for (const m of this.tickerSymbols) {
             this.publicStream?.subscribe('ticker', m)
         }
     }
 
     private onPublicStreamClose = async () => {
-        this.notifier?.sendMessage("Public Stream Close")
     }
 
     private onPublicStreamError = async () => {
-        this.notifier?.sendMessage("Public Stream Error")
     }
 
     private onFill = (fill: gmoPrivateStreamExecutionResponse)=> {

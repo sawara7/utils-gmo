@@ -1,5 +1,4 @@
-import { SlackNotifier } from "slack-notification";
-import { gmoPair } from "./type";
+import { GMOApiConfig, gmoPair } from "./type";
 export interface wsTrade {
     id: number;
     time: string;
@@ -47,7 +46,7 @@ export interface wsOrder {
     fee: number;
 }
 export interface WebsocketAPIClientParams {
-    notifier?: SlackNotifier;
+    apiSettings: GMOApiConfig;
     subscribeOrder: boolean;
     tickerSymbols: gmoPair[];
     account: string;
@@ -58,14 +57,13 @@ export interface WebsocketAPIClientParams {
 }
 export declare class WebsocketAPIClient {
     private isError;
-    private apiKey?;
-    private apiSecret?;
+    private apiKey;
+    private apiSecret;
     private privateStream?;
     private publicStream?;
     private account?;
     private tickerSymbols;
     private subscribeOrder;
-    private notifier?;
     private onClientStart?;
     private onClientError?;
     private onClientOrder?;

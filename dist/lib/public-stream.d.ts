@@ -1,9 +1,9 @@
 import { gmoPublicStreamOrderBooksResponse, gmoPublicStreamTickerResponse, gmoPublicStreamTradesResponse } from './responseType';
 import { gmoPair, gmoWebsocketPublicChannel } from './type';
-export declare type gmoPublicStreamTickerCallback = (ticker: gmoPublicStreamTickerResponse) => void;
-export declare type gmoPublicStreamOrderBooksCallback = (orderbooks: gmoPublicStreamOrderBooksResponse) => void;
-export declare type gmoPublicStreamTradesCallback = (trades: gmoPublicStreamTradesResponse) => void;
-export declare type gmoPublicStreamOption = {
+export type gmoPublicStreamTickerCallback = (ticker: gmoPublicStreamTickerResponse) => void;
+export type gmoPublicStreamOrderBooksCallback = (orderbooks: gmoPublicStreamOrderBooksResponse) => void;
+export type gmoPublicStreamTradesCallback = (trades: gmoPublicStreamTradesResponse) => void;
+export type gmoPublicStreamOption = {
     reconnect: boolean;
     ticker?: gmoPublicStreamTickerCallback;
     orderbooks?: gmoPublicStreamOrderBooksCallback;

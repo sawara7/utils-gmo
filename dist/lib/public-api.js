@@ -24,5 +24,9 @@ class gmoPublicApiClass extends api_1.baseApiClass {
         const path = '/trades';
         return this.get(path, params);
     }
+    getKLines(params) {
+        const path = '/klines';
+        return this.get(path, params);
+    }
 }
 exports.gmoPublicApiClass = gmoPublicApiClass;

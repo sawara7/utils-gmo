@@ -51,6 +51,15 @@ export interface TradesResponse {
   list: TradeResponse[];
 }
 
+export interface KLine {
+  openTime: string
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+}
+
 // Margin
 export interface MarginResponse {
   actualProfitLoss: string;

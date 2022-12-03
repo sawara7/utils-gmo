@@ -1,10 +1,10 @@
 import { gmoPrivateStreamExecutionResponse, gmoPrivateStreamOrderResponse, gmoPrivateStreamPositionResponse, gmoPrivateStreamPositionSummaryResponse } from './responseType';
 import { gmoWebsocketPrivateChannel } from './type';
-export declare type gmoPrivateStreamExecutionCallback = (execution: gmoPrivateStreamExecutionResponse) => void;
-export declare type gmoPrivateStreamOrderCallback = (order: gmoPrivateStreamOrderResponse) => void;
-export declare type gmoPrivateStreamPositionCallback = (position: gmoPrivateStreamPositionResponse) => void;
-export declare type gmoPrivateStreamSummaryCallback = (summary: gmoPrivateStreamPositionSummaryResponse) => void;
-export declare type gmoPrivateStreamOption = {
+export type gmoPrivateStreamExecutionCallback = (execution: gmoPrivateStreamExecutionResponse) => void;
+export type gmoPrivateStreamOrderCallback = (order: gmoPrivateStreamOrderResponse) => void;
+export type gmoPrivateStreamPositionCallback = (position: gmoPrivateStreamPositionResponse) => void;
+export type gmoPrivateStreamSummaryCallback = (summary: gmoPrivateStreamPositionSummaryResponse) => void;
+export type gmoPrivateStreamOption = {
     reconnect: boolean;
     execution?: gmoPrivateStreamExecutionCallback;
     order?: gmoPrivateStreamOrderCallback;
