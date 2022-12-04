@@ -26,6 +26,7 @@ export interface SettlePositionType {
 }
 export interface PostCloseOrderRequest extends BasePostOrderRequest {
     settlePosition: SettlePositionType[];
+    cancelBefore?: boolean;
 }
 export interface PostCloseBulkOrderRequest extends BasePostOrderRequest {
     size: string;
