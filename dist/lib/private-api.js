@@ -34,6 +34,7 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         super(config, options);
         this.apiKey = config.apiKey;
         this.apiSecret = config.apiSecret;
+        this.debug = config.debug ? true : false;
     }
     getWebsocketAccessToken() {
         const path = '/v1/ws-auth';
@@ -77,16 +78,33 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
             params += '?' + querystring.stringify(query);
         }
         const headers = this.makeHeader('GET', path, '');
-        return super.get(path + params, "", headers);
+        if (this.debug) {
+            console.log('GET');
+            console.log(path + params);
+            console.log(headers);
+        }
+        return super.get(path + params, '', headers);
     }
     post(path, query) {
         const data = JSON.stringify(query);
         const headers = this.makeHeader('POST', path, data);
+        if (this.debug) {
+            console.log('POST');
+            console.log(path);
+            console.log(headers);
+            console.log(data);
+        }
         return super.post(path, query, headers);
     }
     put(path, query) {
         // const data = JSON.stringify(query);
         const headers = this.makeHeader('PUT', path, '');
+        if (this.debug) {
+            console.log('PUT');
+            console.log(path);
+            console.log(headers);
+            console.log(query);
+        }
         return super.put(path, query, headers);
     }
     makeHeader(method, path, body) {

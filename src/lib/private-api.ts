@@ -23,12 +23,14 @@ const URL_API_GMO = 'https://api.coin.z.com/private';
 export class gmoPrivateApiClass extends baseApiClass {
   private readonly apiKey: string;
   private readonly apiSecret: string;
+  private readonly debug: boolean;
 
   constructor(config: GMOApiConfig, options?: ApiOptions) {
     config.endPoint = config.endPoint || URL_API_GMO;
     super(config, options);
     this.apiKey = config.apiKey;
     this.apiSecret = config.apiSecret;
+    this.debug = config.debug? true: false;
   }
 
   public getWebsocketAccessToken(): Promise<gmoResponse<string>> {
@@ -82,18 +84,35 @@ export class gmoPrivateApiClass extends baseApiClass {
       params += '?' + querystring.stringify(query);
     }
     const headers = this.makeHeader('GET', path, '');
-    return super.get(path + params, "", headers);
+    if (this.debug) {
+      console.log('GET')
+      console.log(path + params)
+      console.log(headers)
+    }
+    return super.get(path + params, '', headers);
   }
 
   post<T>(path: string, query: {}) {
     const data = JSON.stringify(query);
     const headers = this.makeHeader('POST', path, data);
+    if (this.debug) {
+      console.log('POST')
+      console.log(path)
+      console.log(headers)
+      console.log(data)
+    }
     return super.post(path, query, headers);
   }
 
   put<T>(path: string, query: {}) {
     // const data = JSON.stringify(query);
     const headers = this.makeHeader('PUT', path, '');
+    if (this.debug) {
+      console.log('PUT')
+      console.log(path)
+      console.log(headers)
+      console.log(query)
+    }
     return super.put(path, query, headers);
   }
 

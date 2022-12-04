@@ -7,6 +7,7 @@ export interface ApiConfig {
 export interface GMOApiConfig extends ApiConfig {
     apiKey: string;
     apiSecret: string;
+    debug?: boolean;
 }
 export type gmoStatus = 'MAINTENANCE' | 'REOPEN' | 'OPEN';
 export type gmoWebsocketCommand = 'subscribe' | 'unsubscribe';

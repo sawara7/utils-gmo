@@ -6,6 +6,7 @@ import { ActiveOrdersResponse } from './responseType';
 export declare class gmoPrivateApiClass extends baseApiClass {
     private readonly apiKey;
     private readonly apiSecret;
+    private readonly debug;
     constructor(config: GMOApiConfig, options?: ApiOptions);
     getWebsocketAccessToken(): Promise<gmoResponse<string>>;
     updateWebsocketAccessToken(request: string): Promise<gmoResponse<void>>;
