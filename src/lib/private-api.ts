@@ -79,18 +79,18 @@ export class gmoPrivateApiClass extends baseApiClass {
   }
 
   get<T>(path: string, query?: {}) {
-    let params = '';
-    if (query && Object.keys(query).length) {
-      params += '?' + querystring.stringify(query);
-    }
-    const p = path + params
-    const headers = this.makeHeader('GET', p, '');
+    // let params = '';
+    // if (query && Object.keys(query).length) {
+    //   params += '?' + querystring.stringify(query);
+    // }
+    // const p = path + params
+    const headers = this.makeHeader('GET', path, '');
     if (this.debug) {
       console.log('GET')
-      console.log(p)
+      console.log(path)
       console.log(headers)
     }
-    return super.get(p, '', headers);
+    return super.get(path, query, headers);
   }
 
   post<T>(path: string, query: {}) {

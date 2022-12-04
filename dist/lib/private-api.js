@@ -25,7 +25,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gmoPrivateApiClass = void 0;
 const crypto = __importStar(require("crypto"));
-const querystring = __importStar(require("querystring"));
 const api_1 = require("./api");
 const URL_API_GMO = 'https://api.coin.z.com/private';
 class gmoPrivateApiClass extends api_1.baseApiClass {
@@ -73,18 +72,18 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         return this.get(path, request);
     }
     get(path, query) {
-        let params = '';
-        if (query && Object.keys(query).length) {
-            params += '?' + querystring.stringify(query);
-        }
-        const p = path + params;
-        const headers = this.makeHeader('GET', p, '');
+        // let params = '';
+        // if (query && Object.keys(query).length) {
+        //   params += '?' + querystring.stringify(query);
+        // }
+        // const p = path + params
+        const headers = this.makeHeader('GET', path, '');
         if (this.debug) {
             console.log('GET');
-            console.log(p);
+            console.log(path);
             console.log(headers);
         }
-        return super.get(p, '', headers);
+        return super.get(path, query, headers);
     }
     post(path, query) {
         const data = JSON.stringify(query);
