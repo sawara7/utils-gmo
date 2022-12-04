@@ -88,7 +88,7 @@ export class gmoPrivateApiClass extends baseApiClass {
   }
 
   public getPositionSummary(symbol?: string): Promise<gmoResponse<PositionSummaryResponse>> {
-    const path = '/v1/openPositions';
+    const path = '/v1/positionSummary';
     const request = {}
     if (symbol) {
       Object.assign(request, symbol)

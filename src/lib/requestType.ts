@@ -30,7 +30,7 @@ export interface PostOrderRequest extends BasePostOrderRequest {
 
 export interface SettlePositionType {
   positionId: number;
-  size: string;
+  size: number; // not string
 }
 
 export interface PostCloseOrderRequest extends BasePostOrderRequest {
@@ -54,8 +54,8 @@ export interface CancelBulkOrderRequest {
 
 export interface GetActiveOrderRequest {
   symbol: string;
-  page: number;
-  count: number;
+  page?: number;
+  count?: number;
 }
 
 export interface GetKLinesRequest {
@@ -66,6 +66,6 @@ export interface GetKLinesRequest {
 
 export interface GetOpenPositionsRequest {
   symbol: string;
-  page: number;
-  count: number;
+  page?: number;
+  count?: number;
 }
