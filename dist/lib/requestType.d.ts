@@ -22,10 +22,10 @@ export interface PostOrderRequest extends BasePostOrderRequest {
 }
 export interface SettlePositionType {
     positionId: number;
-    size: number;
+    size: string;
 }
 export interface PostCloseOrderRequest extends BasePostOrderRequest {
-    settlePosition: SettlePositionType;
+    settlePosition: SettlePositionType[];
 }
 export interface PostCloseBulkOrderRequest extends BasePostOrderRequest {
     size: string;

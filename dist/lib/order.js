@@ -32,10 +32,10 @@ class GMOOrderClass extends trade_utils_1.BaseOrderClass {
             price: this.type === 'limit' ? this.price.toString() : undefined,
             executionType: this.type,
             timeInForce: this._reduceOnly ? 'SOK' : 'FAK',
-            settlePosition: {
-                positionId: this._positionID,
-                size: this.size.toString()
-            }
+            settlePosition: [{
+                    positionId: this._positionID,
+                    size: this.size.toString()
+                }]
             // reduceOnly: this._reduceOnly,
             // ioc: this._ioc,
             // postOnly: this.postOnly,
