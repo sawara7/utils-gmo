@@ -77,13 +77,14 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         if (query && Object.keys(query).length) {
             params += '?' + querystring.stringify(query);
         }
-        const headers = this.makeHeader('GET', path, '');
+        const p = path + params;
+        const headers = this.makeHeader('GET', p, '');
         if (this.debug) {
             console.log('GET');
-            console.log(path + params);
+            console.log(p);
             console.log(headers);
         }
-        return super.get(path + params, '', headers);
+        return super.get(p, '', headers);
     }
     post(path, query) {
         const data = JSON.stringify(query);
