@@ -5,6 +5,9 @@ import { GMOApiConfig } from './type';
 import {
   gmoResponse,
   MarginResponse,
+  OpenPosition,
+  OpenPositionsResponse,
+  PositionSummaryResponse,
 } from './responseType';
 import {
   CancelOrderRequest,
@@ -12,7 +15,8 @@ import {
   PostCloseOrderRequest,
   PostCloseBulkOrderRequest,
   PostOrderRequest,
-  CancelBulkOrderRequest
+  CancelBulkOrderRequest,
+  GetOpenPositionsRequest
 } from './requestType';
 import {
   ActiveOrdersResponse
@@ -76,6 +80,20 @@ export class gmoPrivateApiClass extends baseApiClass {
   public getActiveOrders(request: GetActiveOrderRequest): Promise<gmoResponse<ActiveOrdersResponse>> {
     const path = '/v1/activeOrders';
     return this.get(path, request);
+  }
+
+  public getOpenPositions(request: GetOpenPositionsRequest): Promise<gmoResponse<OpenPositionsResponse>> {
+    const path = '/v1/openPositions';
+    return this.get(path, request)
+  }
+
+  public getPositionSummary(symbol?: string): Promise<gmoResponse<PositionSummaryResponse>> {
+    const path = '/v1/openPositions';
+    const request = {}
+    if (symbol) {
+      Object.assign(request, symbol)
+    }
+    return this.get(path, request)
   }
 
   get<T>(path: string, query?: {}) {

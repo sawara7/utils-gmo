@@ -94,6 +94,40 @@ export interface ActiveOrdersResponse {
   list: ActiveOrderResponse[];
 }
 
+export interface OpenPosition {
+  positionId: number //建玉ID
+  symbol: string //レバレッジ取扱銘柄はこちら
+  side: string //売買区分: BUY SELL
+  size: string //建玉数量
+  orderdSize: string //発注中数量
+  price: string //建玉レート
+  lossGain: string //評価損益
+  leverage: string //レバレッジ
+  losscutPrice: string //ロスカットレート
+  timestamp: string //約定日時
+}
+
+export interface PositionSummaryResponse {
+  list: PositionSummary[]
+}
+
+export interface PositionSummary {
+  averagePositionRate: string //平均建玉レート
+  positionLossGain: string //評価損益
+  side: string //売買区分: BUY SELL
+  sumOrderQuantity: string //発注中数量
+  sumPositionQuantity: string //建玉数量
+  symbol: string //レバレッジ取扱銘柄はこちら
+}
+
+export interface OpenPositionsResponse {
+  pagination: {
+    currentPage: number;
+    count: number;
+  }
+  list: OpenPosition[];
+}
+
 export interface gmoStreamBaseResponse{
   channel: string;
   symbol: string

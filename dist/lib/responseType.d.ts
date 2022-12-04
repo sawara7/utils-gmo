@@ -73,6 +73,36 @@ export interface ActiveOrdersResponse {
     };
     list: ActiveOrderResponse[];
 }
+export interface OpenPosition {
+    positionId: number;
+    symbol: string;
+    side: string;
+    size: string;
+    orderdSize: string;
+    price: string;
+    lossGain: string;
+    leverage: string;
+    losscutPrice: string;
+    timestamp: string;
+}
+export interface PositionSummaryResponse {
+    list: PositionSummary[];
+}
+export interface PositionSummary {
+    averagePositionRate: string;
+    positionLossGain: string;
+    side: string;
+    sumOrderQuantity: string;
+    sumPositionQuantity: string;
+    symbol: string;
+}
+export interface OpenPositionsResponse {
+    pagination: {
+        currentPage: number;
+        count: number;
+    };
+    list: OpenPosition[];
+}
 export interface gmoStreamBaseResponse {
     channel: string;
     symbol: string;

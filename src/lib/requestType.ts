@@ -63,3 +63,9 @@ export interface GetKLinesRequest {
   interval: string;
   date: string;
 }
+
+export interface GetOpenPositionsRequest {
+  symbol: string;
+  page: number;
+  count: number;
+}
