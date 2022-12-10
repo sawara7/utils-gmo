@@ -3,11 +3,13 @@ import * as querystring from 'querystring';
 import { baseApiClass, ApiOptions } from './api';
 import { GMOApiConfig } from './type';
 import {
+  GetAssetsResponse,
   gmoResponse,
-  MarginResponse,
+  GetMarginResponse,
   OpenPosition,
   OpenPositionsResponse,
   PositionSummaryResponse,
+  GetTradingVolumeResponse,
 } from './responseType';
 import {
   CancelOrderRequest,
@@ -47,8 +49,21 @@ export class gmoPrivateApiClass extends baseApiClass {
     return this.put(path, {token: request});
   }
 
-  public getMargin(): Promise<gmoResponse<MarginResponse>> {
+  // GET /private/v1/account/assets
+  public getMargin(): Promise<gmoResponse<GetMarginResponse>> {
     const path = '/v1/account/margin'
+    return this.get(path);
+  }
+
+  // GET /private/v1/account/assets
+  public getAssets(): Promise<gmoResponse<GetAssetsResponse>> {
+    const path = '/v1/account/assets'
+    return this.get(path);
+  }
+
+  // GET /private/v1/account/tradingVolume
+  public getTradingVolume(): Promise<gmoResponse<GetTradingVolumeResponse>> {
+    const path = '/v1/account/tradingVolume'
     return this.get(path);
   }
 

@@ -1,6 +1,6 @@
 import { baseApiClass, ApiOptions } from './api';
 import { GMOApiConfig } from './type';
-import { gmoResponse, MarginResponse, OpenPositionsResponse, PositionSummaryResponse } from './responseType';
+import { GetAssetsResponse, gmoResponse, GetMarginResponse, OpenPositionsResponse, PositionSummaryResponse, GetTradingVolumeResponse } from './responseType';
 import { CancelOrderRequest, GetActiveOrderRequest, PostCloseOrderRequest, PostCloseBulkOrderRequest, PostOrderRequest, CancelBulkOrderRequest, GetOpenPositionsRequest } from './requestType';
 import { ActiveOrdersResponse } from './responseType';
 export declare class gmoPrivateApiClass extends baseApiClass {
@@ -10,7 +10,9 @@ export declare class gmoPrivateApiClass extends baseApiClass {
     constructor(config: GMOApiConfig, options?: ApiOptions);
     getWebsocketAccessToken(): Promise<gmoResponse<string>>;
     updateWebsocketAccessToken(request: string): Promise<gmoResponse<void>>;
-    getMargin(): Promise<gmoResponse<MarginResponse>>;
+    getMargin(): Promise<gmoResponse<GetMarginResponse>>;
+    getAssets(): Promise<gmoResponse<GetAssetsResponse>>;
+    getTradingVolume(): Promise<gmoResponse<GetTradingVolumeResponse>>;
     postOrder(request: PostOrderRequest): Promise<gmoResponse<string>>;
     postCloseOrder(request: PostCloseOrderRequest): Promise<gmoResponse<string>>;
     postCloseBulkOrder(request: PostCloseBulkOrderRequest): Promise<gmoResponse<string>>;

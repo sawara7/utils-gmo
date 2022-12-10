@@ -60,14 +60,42 @@ export interface KLine {
   volume: string
 }
 
-// Margin
-export interface MarginResponse {
+// 余力情報を取得
+// 余力情報を取得します。
+// GET /private/v1/account/margin
+export interface GetMarginResponse {
   actualProfitLoss: string
   availableAmount: string
   margin: string
   marginCallStatus: MarginCallStatus
   marginRatio: string
   profitLoss: string
+}
+
+// 資産残高を取得
+// 資産残高を取得します。
+// GET /private/v1/account/assets
+export interface GetAssetsResponse {
+  amount: string //残高
+  available:	string //利用可能金額（残高 - 出金予定額）
+  conversionRate: string //円転レート（販売所での売却価格です。※販売所で取り扱いのない銘柄は、取引所現物での最終約定価格です。）
+  symbol:	string //資産残高銘柄
+}
+
+export interface TodayLimitSize {
+  symbol: string //取扱銘柄はこちら
+  todayLimitOpenSize: string //1日の最大取引数量の残量(新規) ※レバレッジ銘柄の場合のみ
+  todayLimitBuySize: string //1日の最大取引数量の残量(購入) ※現物銘柄の場合のみ
+  todayLimitSellSize: string //1日の最大取引数量の残量(売却) ※現物銘柄の場合のみ
+}
+
+// 取引高情報を取得
+// 取引高情報を取得します
+// GET /private/v1/account/tradingVolume
+export interface GetTradingVolumeResponse {
+  jpyVolume: string //今週の取引高(日本円)
+  tierLevel: number //現在の取引高レベル: 1 2
+  limit: TodayLimitSize[]
 }
 
 // ActiveOrdersResponse

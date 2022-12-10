@@ -44,13 +44,30 @@ export interface KLine {
     close: string;
     volume: string;
 }
-export interface MarginResponse {
+export interface GetMarginResponse {
     actualProfitLoss: string;
     availableAmount: string;
     margin: string;
     marginCallStatus: MarginCallStatus;
     marginRatio: string;
     profitLoss: string;
+}
+export interface GetAssetsResponse {
+    amount: string;
+    available: string;
+    conversionRate: string;
+    symbol: string;
+}
+export interface TodayLimitSize {
+    symbol: string;
+    todayLimitOpenSize: string;
+    todayLimitBuySize: string;
+    todayLimitSellSize: string;
+}
+export interface GetTradingVolumeResponse {
+    jpyVolume: string;
+    tierLevel: number;
+    limit: TodayLimitSize[];
 }
 export interface ActiveOrderResponse {
     rootOrderId: number;

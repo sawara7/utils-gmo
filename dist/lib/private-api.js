@@ -43,8 +43,19 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         const path = '/v1/ws-auth';
         return this.put(path, { token: request });
     }
+    // GET /private/v1/account/assets
     getMargin() {
         const path = '/v1/account/margin';
+        return this.get(path);
+    }
+    // GET /private/v1/account/assets
+    getAssets() {
+        const path = '/v1/account/assets';
+        return this.get(path);
+    }
+    // GET /private/v1/account/tradingVolume
+    getTradingVolume() {
+        const path = '/v1/account/tradingVolume';
         return this.get(path);
     }
     postOrder(request) {
