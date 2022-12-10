@@ -1,4 +1,4 @@
-import { gmoStatus } from './type';
+import { gmoStatus, MarginCallStatus } from './type';
 
 // root
 export interface gmoResponse<T> {
@@ -62,10 +62,12 @@ export interface KLine {
 
 // Margin
 export interface MarginResponse {
-  actualProfitLoss: string;
-  availableAmount: string;
-  margin: string;
-  profitLoss: string;
+  actualProfitLoss: string
+  availableAmount: string
+  margin: string
+  marginCallStatus: MarginCallStatus
+  marginRatio: string
+  profitLoss: string
 }
 
 // ActiveOrdersResponse

@@ -1,4 +1,4 @@
-import { gmoStatus } from './type';
+import { gmoStatus, MarginCallStatus } from './type';
 export interface gmoResponse<T> {
     status: number;
     data: T;
@@ -48,6 +48,8 @@ export interface MarginResponse {
     actualProfitLoss: string;
     availableAmount: string;
     margin: string;
+    marginCallStatus: MarginCallStatus;
+    marginRatio: string;
     profitLoss: string;
 }
 export interface ActiveOrderResponse {

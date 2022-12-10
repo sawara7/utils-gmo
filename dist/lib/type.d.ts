@@ -9,6 +9,8 @@ export interface GMOApiConfig extends ApiConfig {
     apiSecret: string;
     debug?: boolean;
 }
+export declare const MarginCallStatusList: readonly ["DEFAULT", "INVERSE", "BID", "ASK", "MID"];
+export type MarginCallStatus = typeof MarginCallStatusList[number];
 export type gmoStatus = 'MAINTENANCE' | 'REOPEN' | 'OPEN';
 export type gmoWebsocketCommand = 'subscribe' | 'unsubscribe';
 export declare const gmoWebsocketPublicChannels: readonly ["ticker", "trades", "orderbooks"];
