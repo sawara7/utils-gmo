@@ -244,6 +244,9 @@ export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseRe
   msgType: string;
 }
 
+export interface gmoExecutionResponseList {
+  list: gmoExecutionResponse[]
+}
 export interface gmoExecutionResponse {
   executionId: number	//約定ID
   orderId: number	//注文ID

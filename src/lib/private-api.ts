@@ -11,6 +11,7 @@ import {
   PositionSummaryResponse,
   GetTradingVolumeResponse,
   gmoExecutionResponse,
+  gmoExecutionResponseList,
 } from './responseType';
 import {
   CancelOrderRequest,
@@ -104,7 +105,7 @@ export class gmoPrivateApiClass extends baseApiClass {
     return this.get(path, request)
   }
 
-  public getExecution(request: GetExecutionRequest): Promise<gmoResponse<gmoExecutionResponse>> {
+  public getExecution(request: GetExecutionRequest): Promise<gmoResponse<gmoExecutionResponseList>> {
     const path = '/v1/executions';
     return this.get(path, request)
   }

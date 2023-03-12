@@ -200,6 +200,9 @@ export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseRe
     timestamp: string;
     msgType: string;
 }
+export interface gmoExecutionResponseList {
+    list: gmoExecutionResponse[];
+}
 export interface gmoExecutionResponse {
     executionId: number;
     orderId: number;
