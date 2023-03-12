@@ -16,9 +16,14 @@ export declare class baseApiClass {
     readonly timeout: number;
     readonly optionsCallback?: Function;
     readonly responseCallback?: Function;
+    private lastOrderTime;
+    private sendingInterval;
+    private waitingCount;
+    private maxWaiting;
     constructor(config: ApiConfig, options?: ApiOptions);
     get(path: string, params?: {}, headers?: {}): Promise<any>;
     post(path: string, data?: {}, headers?: {}): Promise<any>;
     put(path: string, data?: {}, headers?: {}): Promise<any>;
     request(method: Method, path: string, params?: {}, data?: {}, headers?: {}): Promise<any>;
+    private sleepWhileInterval;
 }

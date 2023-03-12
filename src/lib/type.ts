@@ -4,6 +4,8 @@ export interface ApiConfig {
   endPoint?: string;
   keepAlive?: boolean;
   timeout?: number;
+  sendingInterval?: number;
+  maxWaiting?: number;
 }
 
 export interface GMOApiConfig extends ApiConfig {

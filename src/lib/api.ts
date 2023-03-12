@@ -2,6 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import axios, { AxiosError, Method } from 'axios';
 import { ApiConfig } from './type';
+import { sleep } from 'my-utils'
 
 export interface ApiOptions {
   optionsCallback?: Function;
@@ -26,6 +27,10 @@ export class baseApiClass {
   readonly timeout: number;
   readonly optionsCallback?: Function;
   readonly responseCallback?: Function;
+  private lastOrderTime: number = 0
+  private sendingInterval: number
+  private waitingCount: number = 0
+  private maxWaiting: number
 
   constructor(config: ApiConfig, options?: ApiOptions) {
     this.endPoint = config.endPoint || "";
@@ -35,6 +40,9 @@ export class baseApiClass {
       this.optionsCallback = options.optionsCallback;
       this.responseCallback = options.responseCallback;
     }
+    this.sendingInterval = config.sendingInterval || 1000/6 // Default Tier.1
+    if (this.lastOrderTime===0) this.lastOrderTime = Date.now()
+    this.maxWaiting = config.maxWaiting || 100
   }
 
   async get(path: string, params?: {}, headers?: {}) {
@@ -50,6 +58,7 @@ export class baseApiClass {
   }
 
   async request(method: Method, path: string, params?: {}, data?: {}, headers?: {}) {
+    await this.sleepWhileInterval()
     const options = {
       method: method,
       baseURL: this.endPoint,
@@ -108,5 +117,26 @@ export class baseApiClass {
     //   }
     //   throw new ApiError(code, message, data);
     // });
+  }
+
+  private async sleepWhileInterval(): Promise<void> {
+    this.waitingCount++;
+    try {
+      if (this.waitingCount > this.maxWaiting) throw new Error('API max waiting.')
+      const interval = Date.now() - this.lastOrderTime
+      if (interval > 0) {
+          if (interval < this.sendingInterval) {
+            this.lastOrderTime += this.sendingInterval
+            await sleep(this.sendingInterval - interval)
+          } else if (interval > this.sendingInterval) {
+            this.lastOrderTime = Date.now()
+          }
+      } else if (interval < 0) {
+        this.lastOrderTime += this.sendingInterval
+        await sleep(this.lastOrderTime - Date.now())
+      }
+      } finally {
+        this.waitingCount--
+    }
   }
 }

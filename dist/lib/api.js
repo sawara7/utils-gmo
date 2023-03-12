@@ -39,6 +39,7 @@ exports.baseApiClass = exports.ApiError = void 0;
 const http = __importStar(require("http"));
 const https = __importStar(require("https"));
 const axios_1 = __importDefault(require("axios"));
+const my_utils_1 = require("my-utils");
 class ApiError extends Error {
     constructor(code, message, data) {
         super('API_ERROR');
@@ -52,6 +53,8 @@ class ApiError extends Error {
 exports.ApiError = ApiError;
 class baseApiClass {
     constructor(config, options) {
+        this.lastOrderTime = 0;
+        this.waitingCount = 0;
         this.endPoint = config.endPoint || "";
         this.keepAlive = config.keepAlive || false;
         this.timeout = config.timeout || 3000;
@@ -59,6 +62,10 @@ class baseApiClass {
             this.optionsCallback = options.optionsCallback;
             this.responseCallback = options.responseCallback;
         }
+        this.sendingInterval = config.sendingInterval || 1000 / 6; // Default Tier.1
+        if (this.lastOrderTime === 0)
+            this.lastOrderTime = Date.now();
+        this.maxWaiting = config.maxWaiting || 100;
     }
     get(path, params, headers) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -77,6 +84,7 @@ class baseApiClass {
     }
     request(method, path, params, data, headers) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.sleepWhileInterval();
             const options = {
                 method: method,
                 baseURL: this.endPoint,
@@ -133,6 +141,32 @@ class baseApiClass {
             //   }
             //   throw new ApiError(code, message, data);
             // });
+        });
+    }
+    sleepWhileInterval() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.waitingCount++;
+            try {
+                if (this.waitingCount > this.maxWaiting)
+                    throw new Error('API max waiting.');
+                const interval = Date.now() - this.lastOrderTime;
+                if (interval > 0) {
+                    if (interval < this.sendingInterval) {
+                        this.lastOrderTime += this.sendingInterval;
+                        yield (0, my_utils_1.sleep)(this.sendingInterval - interval);
+                    }
+                    else if (interval > this.sendingInterval) {
+                        this.lastOrderTime = Date.now();
+                    }
+                }
+                else if (interval < 0) {
+                    this.lastOrderTime += this.sendingInterval;
+                    yield (0, my_utils_1.sleep)(this.lastOrderTime - Date.now());
+                }
+            }
+            finally {
+                this.waitingCount--;
+            }
         });
     }
 }
