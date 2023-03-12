@@ -86,6 +86,10 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         const path = '/v1/openPositions';
         return this.get(path, request);
     }
+    getExecution(request) {
+        const path = '/v1/executions';
+        return this.get(path, request);
+    }
     getPositionSummary(symbol) {
         const path = '/v1/positionSummary';
         const request = {};

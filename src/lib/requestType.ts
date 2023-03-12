@@ -70,3 +70,8 @@ export interface GetOpenPositionsRequest {
   page?: number;
   count?: number;
 }
+
+export interface GetExecutionRequest {
+  orderId?: number
+  executionId?: number
+}

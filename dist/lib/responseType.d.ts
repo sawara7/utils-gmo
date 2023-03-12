@@ -200,3 +200,16 @@ export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseRe
     timestamp: string;
     msgType: string;
 }
+export interface gmoExecutionResponse {
+    executionId: number;
+    orderId: number;
+    positionId: number;
+    symbol: string;
+    side: string;
+    settleType: string;
+    size: string;
+    price: string;
+    lossGain: string;
+    fee: string;
+    timestamp: string;
+}

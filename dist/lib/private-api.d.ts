@@ -1,7 +1,7 @@
 import { baseApiClass, ApiOptions } from './api';
 import { GMOApiConfig } from './type';
-import { GetAssetsResponse, gmoResponse, GetMarginResponse, OpenPositionsResponse, PositionSummaryResponse, GetTradingVolumeResponse } from './responseType';
-import { CancelOrderRequest, GetActiveOrderRequest, PostCloseOrderRequest, PostCloseBulkOrderRequest, PostOrderRequest, CancelBulkOrderRequest, GetOpenPositionsRequest } from './requestType';
+import { GetAssetsResponse, gmoResponse, GetMarginResponse, OpenPositionsResponse, PositionSummaryResponse, GetTradingVolumeResponse, gmoExecutionResponse } from './responseType';
+import { CancelOrderRequest, GetActiveOrderRequest, PostCloseOrderRequest, PostCloseBulkOrderRequest, PostOrderRequest, CancelBulkOrderRequest, GetOpenPositionsRequest, GetExecutionRequest } from './requestType';
 import { ActiveOrdersResponse } from './responseType';
 export declare class gmoPrivateApiClass extends baseApiClass {
     private readonly apiKey;
@@ -20,6 +20,7 @@ export declare class gmoPrivateApiClass extends baseApiClass {
     cancelBulkOrder(request: CancelBulkOrderRequest): Promise<gmoResponse<number[]>>;
     getActiveOrders(request: GetActiveOrderRequest): Promise<gmoResponse<ActiveOrdersResponse>>;
     getOpenPositions(request: GetOpenPositionsRequest): Promise<gmoResponse<OpenPositionsResponse>>;
+    getExecution(request: GetExecutionRequest): Promise<gmoResponse<gmoExecutionResponse>>;
     getPositionSummary(symbol?: string): Promise<gmoResponse<PositionSummaryResponse>>;
     get<T>(path: string, query?: {}): Promise<any>;
     post<T>(path: string, query: {}): Promise<any>;

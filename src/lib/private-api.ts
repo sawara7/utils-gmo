@@ -10,6 +10,7 @@ import {
   OpenPositionsResponse,
   PositionSummaryResponse,
   GetTradingVolumeResponse,
+  gmoExecutionResponse,
 } from './responseType';
 import {
   CancelOrderRequest,
@@ -18,7 +19,8 @@ import {
   PostCloseBulkOrderRequest,
   PostOrderRequest,
   CancelBulkOrderRequest,
-  GetOpenPositionsRequest
+  GetOpenPositionsRequest,
+  GetExecutionRequest
 } from './requestType';
 import {
   ActiveOrdersResponse
@@ -99,6 +101,11 @@ export class gmoPrivateApiClass extends baseApiClass {
 
   public getOpenPositions(request: GetOpenPositionsRequest): Promise<gmoResponse<OpenPositionsResponse>> {
     const path = '/v1/openPositions';
+    return this.get(path, request)
+  }
+
+  public getExecution(request: GetExecutionRequest): Promise<gmoResponse<gmoExecutionResponse>> {
+    const path = '/v1/executions';
     return this.get(path, request)
   }
 

@@ -243,3 +243,17 @@ export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseRe
   timestamp: string;
   msgType: string;
 }
+
+export interface gmoExecutionResponse {
+  executionId: number	//約定ID
+  orderId: number	//注文ID
+  positionId: number	//建玉ID ※レバレッジの場合のみ
+  symbol: string	//取扱銘柄はこちら
+  side: string //売買区分: BUY SELL
+  settleType: string //決済区分: OPEN CLOSE
+  size: string //約定数量
+  price: string //約定レート
+  lossGain: string //決済損益
+  fee: string //取引手数料 ※Takerの場合はプラスの値、Makerの場合はマイナスの値が返ってきます。
+  timestamp: string	//約定日時
+}
