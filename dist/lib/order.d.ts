@@ -1,4 +1,4 @@
-import { BaseOrderSettings, BaseOrderClass } from "trade-utils";
+import { BaseOrderSettings, BaseOrderClass } from "utils-trade";
 import { PostOrderRequest, PostCloseOrderRequest } from "..";
 export interface GMOOrderSettings extends BaseOrderSettings {
     positionID: number;

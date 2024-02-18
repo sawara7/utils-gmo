@@ -1,4 +1,4 @@
-import { BasePositionClass, BasePositionParameters } from "trade-utils";
+import { BasePositionClass, BasePositionParameters } from "utils-trade";
 import { gmoPrivateApiClass, GMOOrderClass } from "..";
 export interface GMOPositionParameters extends BasePositionParameters {
     api: gmoPrivateApiClass;

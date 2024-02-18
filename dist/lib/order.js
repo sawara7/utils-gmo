@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GMOOrderClass = void 0;
-const trade_utils_1 = require("trade-utils");
-class GMOOrderClass extends trade_utils_1.BaseOrderClass {
+const utils_trade_1 = require("utils-trade");
+class GMOOrderClass extends utils_trade_1.BaseOrderClass {
     constructor(params) {
         super(params);
         this._reduceOnly = params.reduceOnly || false;

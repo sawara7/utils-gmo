@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GMOPositionClass = void 0;
-const trade_utils_1 = require("trade-utils");
-class GMOPositionClass extends trade_utils_1.BasePositionClass {
+const utils_trade_1 = require("utils-trade");
+class GMOPositionClass extends utils_trade_1.BasePositionClass {
     constructor(params) {
         super(params);
         this._api = params.api;

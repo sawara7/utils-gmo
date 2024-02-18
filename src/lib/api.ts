@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import axios, { AxiosError, Method } from 'axios';
 import { ApiConfig } from './type';
-import { sleep } from 'my-utils'
+import { sleep } from 'utils-general'
 
 export interface ApiOptions {
   optionsCallback?: Function;

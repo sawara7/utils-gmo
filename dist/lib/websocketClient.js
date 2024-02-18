@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebsocketAPIClient = void 0;
-const my_utils_1 = require("my-utils");
+const utils_general_1 = require("utils-general");
 const private_stream_1 = require("./private-stream");
 const public_stream_1 = require("./public-stream");
 class WebsocketAPIClient {
@@ -20,7 +20,7 @@ class WebsocketAPIClient {
         this.onPrivateStreamOpen = () => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             this.isError = false;
-            yield (0, my_utils_1.sleep)(1000);
+            yield (0, utils_general_1.sleep)(1000);
             if (!this.isError) {
                 if (this.subscribeOrder) {
                     (_a = this.privateStream) === null || _a === void 0 ? void 0 : _a.subscribe("executionEvents");

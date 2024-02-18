@@ -1,16 +1,13 @@
 import * as crypto from 'crypto';
-import * as querystring from 'querystring';
 import { baseApiClass, ApiOptions } from './api';
 import { GMOApiConfig } from './type';
 import {
   GetAssetsResponse,
   gmoResponse,
   GetMarginResponse,
-  OpenPosition,
   OpenPositionsResponse,
   PositionSummaryResponse,
   GetTradingVolumeResponse,
-  gmoExecutionResponse,
   gmoExecutionResponseList,
 } from './responseType';
 import {

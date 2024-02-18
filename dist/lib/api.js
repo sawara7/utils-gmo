@@ -39,7 +39,7 @@ exports.baseApiClass = exports.ApiError = void 0;
 const http = __importStar(require("http"));
 const https = __importStar(require("https"));
 const axios_1 = __importDefault(require("axios"));
-const my_utils_1 = require("my-utils");
+const utils_general_1 = require("utils-general");
 class ApiError extends Error {
     constructor(code, message, data) {
         super('API_ERROR');
@@ -153,7 +153,7 @@ class baseApiClass {
                 if (interval > 0) {
                     if (interval < this.sendingInterval) {
                         this.lastOrderTime += this.sendingInterval;
-                        yield (0, my_utils_1.sleep)(this.sendingInterval - interval);
+                        yield (0, utils_general_1.sleep)(this.sendingInterval - interval);
                     }
                     else if (interval > this.sendingInterval) {
                         this.lastOrderTime = Date.now();
@@ -161,7 +161,7 @@ class baseApiClass {
                 }
                 else if (interval < 0) {
                     this.lastOrderTime += this.sendingInterval;
-                    yield (0, my_utils_1.sleep)(this.lastOrderTime - Date.now());
+                    yield (0, utils_general_1.sleep)(this.lastOrderTime - Date.now());
                 }
             }
             finally {

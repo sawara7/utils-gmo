@@ -1,7 +1,7 @@
 import {
     BasePositionClass,
     BasePositionParameters
-} from "trade-utils"
+} from "utils-trade"
 
 import {
     gmoPrivateApiClass,

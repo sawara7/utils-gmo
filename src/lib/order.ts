@@ -1,7 +1,7 @@
 import {
     BaseOrderSettings,
     BaseOrderClass
-} from "trade-utils"
+} from "utils-trade"
 
 import {
     PostOrderRequest,

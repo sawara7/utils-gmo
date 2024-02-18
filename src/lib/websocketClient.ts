@@ -1,6 +1,6 @@
 import {
     sleep
-} from "my-utils"
+} from "utils-general"
 
 import {
     gmoPrivateStreamAPIClass as gmoPrivateStreamClass
