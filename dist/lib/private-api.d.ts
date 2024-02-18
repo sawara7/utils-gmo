@@ -11,7 +11,7 @@ export declare class gmoPrivateApiClass extends baseApiClass {
     getWebsocketAccessToken(): Promise<gmoResponse<string>>;
     updateWebsocketAccessToken(request: string): Promise<gmoResponse<void>>;
     getMargin(): Promise<gmoResponse<GetMarginResponse>>;
-    getAssets(): Promise<gmoResponse<GetAssetsResponse>>;
+    getAssets(): Promise<gmoResponse<GetAssetsResponse[]>>;
     getTradingVolume(): Promise<gmoResponse<GetTradingVolumeResponse>>;
     postOrder(request: PostOrderRequest): Promise<gmoResponse<string>>;
     postCloseOrder(request: PostCloseOrderRequest): Promise<gmoResponse<string>>;

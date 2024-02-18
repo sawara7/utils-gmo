@@ -56,7 +56,7 @@ export class gmoPrivateApiClass extends baseApiClass {
   }
 
   // GET /private/v1/account/assets
-  public getAssets(): Promise<gmoResponse<GetAssetsResponse>> {
+  public getAssets(): Promise<gmoResponse<GetAssetsResponse[]>> {
     const path = '/v1/account/assets'
     return this.get(path);
   }
