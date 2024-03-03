@@ -9,6 +9,7 @@ import {
   PositionSummaryResponse,
   GetTradingVolumeResponse,
   gmoExecutionResponseList,
+  OrdersResponse,
 } from './responseType';
 import {
   CancelOrderRequest,
@@ -114,6 +115,14 @@ export class gmoPrivateApiClass extends baseApiClass {
       Object.assign(request, symbol)
     }
     return this.get(path, request)
+  }
+
+  public getOrders(orderIds: string[]): Promise<gmoResponse<OrdersResponse>> {
+    const path = '/v1/orders'
+    const request = {
+      'orderId': orderIds.toString()
+    }
+    return this.get(path, request) 
   }
 
   get<T>(path: string, query?: {}) {

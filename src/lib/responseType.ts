@@ -99,7 +99,7 @@ export interface GetTradingVolumeResponse {
 }
 
 // ActiveOrdersResponse
-export interface ActiveOrderResponse {
+export interface OrderInfo {
   rootOrderId: number;
   orderId: number;
   symbol: string;
@@ -121,7 +121,11 @@ export interface ActiveOrdersResponse {
     currentPage: number;
     count: number;
   }
-  list: ActiveOrderResponse[];
+  list: OrderInfo[];
+}
+
+export interface OrdersResponse {
+  list: OrderInfo[];
 }
 
 export interface OpenPosition {

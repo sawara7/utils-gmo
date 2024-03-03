@@ -98,6 +98,13 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         }
         return this.get(path, request);
     }
+    getOrders(orderIds) {
+        const path = '/v1/orders';
+        const request = {
+            'orderId': orderIds.toString()
+        };
+        return this.get(path, request);
+    }
     get(path, query) {
         // let params = '';
         // if (query && Object.keys(query).length) {
