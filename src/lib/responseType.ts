@@ -1,10 +1,19 @@
 import { gmoStatus, MarginCallStatus } from './type';
 
+// error message
+// エラー時はHTTP 200のまま status: 1 と messages が返るため、
+// 呼び出し側は status === 0 を確認する必要がある。
+export interface gmoErrorMessage {
+  message_code: string;
+  message_string: string;
+}
+
 // root
 export interface gmoResponse<T> {
   status: number;
   data: T;
   responsetime: string;
+  messages?: gmoErrorMessage[];
 }
 
 // status
@@ -17,6 +26,7 @@ export interface gmoTickerResponse {
   ask: string;
   bid: string;
   high: string;
+  last: string;
   low: string;
   symbol: string;
   timestamp: string;

@@ -13,7 +13,7 @@ export interface GMOApiConfig extends ApiConfig {
 }
 export declare const MarginCallStatusList: readonly ["DEFAULT", "INVERSE", "BID", "ASK", "MID"];
 export type MarginCallStatus = typeof MarginCallStatusList[number];
-export type gmoStatus = 'MAINTENANCE' | 'REOPEN' | 'OPEN';
+export type gmoStatus = 'MAINTENANCE' | 'PREOPEN' | 'OPEN';
 export type gmoWebsocketCommand = 'subscribe' | 'unsubscribe';
 export declare const gmoWebsocketPublicChannels: readonly ["ticker", "trades", "orderbooks"];
 export type gmoWebsocketPublicChannel = typeof gmoWebsocketPublicChannels[number];

@@ -23,7 +23,8 @@ export const MarginCallStatusList = [
 ] as const;
 export type MarginCallStatus = typeof MarginCallStatusList[number];
 
-export type gmoStatus = 'MAINTENANCE' | 'REOPEN' | 'OPEN';
+// 取引所ステータス（REOPENという値はAPIに存在しないため修正）
+export type gmoStatus = 'MAINTENANCE' | 'PREOPEN' | 'OPEN';
 export type gmoWebsocketCommand = 'subscribe' | 'unsubscribe';
 export const gmoWebsocketPublicChannels = [
   'ticker',

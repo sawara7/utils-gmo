@@ -1,0 +1,37 @@
+import { baseApiClass, ApiOptions } from '../api';
+import { GMOApiConfig } from '../type';
+import { gmoResponse } from '../responseType';
+import { GetFXActiveOrdersRequest, GetFXExecutionsRequest, GetFXLatestExecutionsRequest, GetFXOpenPositionsRequest, GetFXOrdersRequest, GetFXPositionSummaryRequest, PostFXCancelBulkOrderRequest, PostFXCancelOrdersRequest, PostFXChangeIfdOrderRequest, PostFXChangeIfoOrderRequest, PostFXChangeOcoOrderRequest, PostFXChangeOrderRequest, PostFXCloseOrderRequest, PostFXIfdOrderRequest, PostFXIfoOrderRequest, PostFXOrderRequest, PostFXSpeedOrderRequest } from './requestType';
+import { gmoFXActiveOrdersResponse, gmoFXAssetsResponse, gmoFXCancelOrdersResponse, gmoFXExecutionsResponse, gmoFXOpenPositionsResponse, gmoFXOrder, gmoFXOrdersResponse, gmoFXPositionSummaryResponse } from './responseType';
+export declare class gmoFXPrivateApiClass extends baseApiClass {
+    private readonly apiKey;
+    private readonly apiSecret;
+    private readonly debug;
+    constructor(config: GMOApiConfig, options?: ApiOptions);
+    getAssets(): Promise<gmoResponse<gmoFXAssetsResponse[]>>;
+    getOrders(request: GetFXOrdersRequest): Promise<gmoResponse<gmoFXOrdersResponse>>;
+    getActiveOrders(request?: GetFXActiveOrdersRequest): Promise<gmoResponse<gmoFXActiveOrdersResponse>>;
+    getExecutions(request: GetFXExecutionsRequest): Promise<gmoResponse<gmoFXExecutionsResponse>>;
+    getLatestExecutions(request: GetFXLatestExecutionsRequest): Promise<gmoResponse<gmoFXExecutionsResponse>>;
+    getOpenPositions(request?: GetFXOpenPositionsRequest): Promise<gmoResponse<gmoFXOpenPositionsResponse>>;
+    getPositionSummary(request?: GetFXPositionSummaryRequest): Promise<gmoResponse<gmoFXPositionSummaryResponse>>;
+    postSpeedOrder(request: PostFXSpeedOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    postOrder(request: PostFXOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    postIfdOrder(request: PostFXIfdOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    postIfoOrder(request: PostFXIfoOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    postCloseOrder(request: PostFXCloseOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    changeOrder(request: PostFXChangeOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    changeOcoOrder(request: PostFXChangeOcoOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    changeIfdOrder(request: PostFXChangeIfdOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    changeIfoOrder(request: PostFXChangeIfoOrderRequest): Promise<gmoResponse<gmoFXOrder[]>>;
+    cancelOrders(request: PostFXCancelOrdersRequest): Promise<gmoResponse<gmoFXCancelOrdersResponse>>;
+    cancelBulkOrder(request: PostFXCancelBulkOrderRequest): Promise<gmoResponse<gmoFXCancelOrdersResponse>>;
+    getWebsocketAccessToken(): Promise<gmoResponse<string>>;
+    updateWebsocketAccessToken(token: string): Promise<gmoResponse<void>>;
+    deleteWebsocketAccessToken(token: string): Promise<gmoResponse<void>>;
+    get(path: string, query?: {}): Promise<any>;
+    post(path: string, data: {}): Promise<any>;
+    put(path: string, data: {}): Promise<any>;
+    delete(path: string, data: {}): Promise<any>;
+    private makeHeader;
+}

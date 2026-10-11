@@ -1,8 +1,13 @@
 import { gmoStatus, MarginCallStatus } from './type';
+export interface gmoErrorMessage {
+    message_code: string;
+    message_string: string;
+}
 export interface gmoResponse<T> {
     status: number;
     data: T;
     responsetime: string;
+    messages?: gmoErrorMessage[];
 }
 export interface gmoStatusResponse {
     status: gmoStatus;
@@ -11,6 +16,7 @@ export interface gmoTickerResponse {
     ask: string;
     bid: string;
     high: string;
+    last: string;
     low: string;
     symbol: string;
     timestamp: string;
