@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # GMOコインのAPI変更（銘柄追加など）に気づくため毎朝ライブテストを走らせる
+  schedule:
+    - cron: '0 22 * * *' # 07:00 JST
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build & unit test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # prepareスクリプトによりインストール時にビルドも走る
+      - run: npm ci
+
+      # ネットワークに依存しないテスト（これが必須のゲート）
+      - run: npm run test:unit
+
+      # distは利用側がそのまま読むため、srcと一致していることを保証する
+      - name: dist が src と一致しているか確認
+        run: |
+          npm run build
+          if ! git diff --exit-code -- dist; then
+            echo "::error::dist が src と一致していません。npm run build を実行して dist をコミットしてください。"
+            exit 1
+          fi
+
+  live:
+    name: live test (GMOコインのAPIに接続)
+    runs-on: ubuntu-latest
+    # 実APIに接続するため、ネットワークやメンテナンスの影響で落ちることがある。
+    # 必須のゲートにはせず、API変更の検知用として扱う。
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - run: npm run test:live
