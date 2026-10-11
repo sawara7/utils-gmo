@@ -1,6 +1,6 @@
 {
   "name": "utils-gmo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GMOコイン（暗号資産 / 外国為替FX）のAPIクライアント",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

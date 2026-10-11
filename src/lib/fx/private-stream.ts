@@ -28,15 +28,38 @@ export type gmoFXPrivateStreamOrderCallback = (order: gmoFXPrivateStreamOrderRes
 export type gmoFXPrivateStreamPositionCallback = (position: gmoFXPrivateStreamPositionResponse) => void;
 export type gmoFXPrivateStreamSummaryCallback = (summary: gmoFXPrivateStreamPositionSummaryResponse) => void;
 
-export type gmoFXPrivateStreamOption = {
-    reconnect: boolean
+export type gmoFXPrivateStreamCallbacks = {
     execution?: gmoFXPrivateStreamExecutionCallback
     order?: gmoFXPrivateStreamOrderCallback
     position?: gmoFXPrivateStreamPositionCallback
     summary?: gmoFXPrivateStreamSummaryCallback
+}
+
+export type gmoFXPrivateStreamOption = gmoFXPrivateStreamCallbacks & {
+    reconnect: boolean
     onWebSocketOpen?: () => void
     onWebSocketClose?: () => void
     onWebSocketError?: () => void
+}
+
+// 受信メッセージの振り分け。テストしやすいようにクラスから切り出している。
+// 対応するチャンネルを処理した場合に true を返す。
+export function dispatchFXPrivateStreamMessage(message: string, callbacks: gmoFXPrivateStreamCallbacks): boolean {
+    const res = JSON.parse(message) as gmoFXPrivateStreamBaseResponse
+    if (res.channel === 'executionEvents') {
+        if (callbacks.execution) { callbacks.execution(res as gmoFXPrivateStreamExecutionResponse) }
+        return true
+    } else if (res.channel === 'orderEvents') {
+        if (callbacks.order) { callbacks.order(res as gmoFXPrivateStreamOrderResponse) }
+        return true
+    } else if (res.channel === 'positionEvents') {
+        if (callbacks.position) { callbacks.position(res as gmoFXPrivateStreamPositionResponse) }
+        return true
+    } else if (res.channel === 'positionSummaryEvents') {
+        if (callbacks.summary) { callbacks.summary(res as gmoFXPrivateStreamPositionSummaryResponse) }
+        return true
+    }
+    return false
 }
 
 export class gmoFXPrivateStreamClass {
@@ -44,6 +67,7 @@ export class gmoFXPrivateStreamClass {
     private ws: websocket | null = null
     private api: gmoFXPrivateApiClass
     private token: string = ''
+    private callbacks: gmoFXPrivateStreamCallbacks
     executionCallback?: gmoFXPrivateStreamExecutionCallback
     orderCallback?: gmoFXPrivateStreamOrderCallback
     positionCallback?: gmoFXPrivateStreamPositionCallback
@@ -67,6 +91,12 @@ export class gmoFXPrivateStreamClass {
         this.orderCallback = option.order
         this.positionCallback = option.position
         this.summaryCallback = option.summary
+        this.callbacks = {
+            execution: (res) => { if (this.executionCallback) { this.executionCallback(res) } },
+            order: (res) => { if (this.orderCallback) { this.orderCallback(res) } },
+            position: (res) => { if (this.positionCallback) { this.positionCallback(res) } },
+            summary: (res) => { if (this.summaryCallback) { this.summaryCallback(res) } }
+        }
         this.onWebSocketOpen = option.onWebSocketOpen
         this.onWebSocketClose = option.onWebSocketClose
         this.onWebSocketError = option.onWebSocketError
@@ -119,24 +149,7 @@ export class gmoFXPrivateStreamClass {
     }
 
     private onMessage = (data: websocket.RawData) => {
-        const res = JSON.parse(data.toString()) as gmoFXPrivateStreamBaseResponse
-        if (res.channel === 'executionEvents') {
-            if (this.executionCallback) {
-                this.executionCallback(res as gmoFXPrivateStreamExecutionResponse)
-            }
-        } else if (res.channel === 'orderEvents') {
-            if (this.orderCallback) {
-                this.orderCallback(res as gmoFXPrivateStreamOrderResponse)
-            }
-        } else if (res.channel === 'positionEvents') {
-            if (this.positionCallback) {
-                this.positionCallback(res as gmoFXPrivateStreamPositionResponse)
-            }
-        } else if (res.channel === 'positionSummaryEvents') {
-            if (this.summaryCallback) {
-                this.summaryCallback(res as gmoFXPrivateStreamPositionSummaryResponse)
-            }
-        }
+        dispatchFXPrivateStreamMessage(data.toString(), this.callbacks)
     }
 
     // option: 'PERIODIC' は positionSummaryEvents のみ指定可能（5秒ごとに配信）。

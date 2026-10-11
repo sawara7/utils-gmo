@@ -16,6 +16,11 @@ class gmoPublicApiClass extends api_1.baseApiClass {
         const path = '/ticker';
         return this.get(path, params || {});
     }
+    // GET /public/v1/symbols
+    getSymbols() {
+        const path = '/symbols';
+        return this.get(path);
+    }
     getOrderbooks(params) {
         const path = '/orderbooks';
         return this.get(path, params);

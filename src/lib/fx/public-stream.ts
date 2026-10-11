@@ -15,18 +15,34 @@ const SUBSCRIBE_INTERVAL = 1000;
 
 export type gmoFXPublicStreamTickerCallback = (ticker: gmoFXPublicStreamTickerResponse) => void;
 
-export type gmoFXPublicStreamOption = {
-    reconnect: boolean
+export type gmoFXPublicStreamCallbacks = {
     ticker?: gmoFXPublicStreamTickerCallback
+}
+
+export type gmoFXPublicStreamOption = gmoFXPublicStreamCallbacks & {
+    reconnect: boolean
     onWebSocketOpen?: () => void
     onWebSocketClose?: () => void
     onWebSocketError?: () => void
 }
 
+// 受信メッセージの振り分け。テストしやすいようにクラスから切り出している。
+// 外国為替FXのtickerは暗号資産と違い channel を返さないため、
+// bid / ask を持つメッセージを ticker として扱う。
+// 対応するメッセージを処理した場合に true を返す。
+export function dispatchFXPublicStreamMessage(message: string, callbacks: gmoFXPublicStreamCallbacks): boolean {
+    const res = JSON.parse(message)
+    if (res.bid !== undefined && res.ask !== undefined) {
+        if (callbacks.ticker) { callbacks.ticker(res as gmoFXPublicStreamTickerResponse) }
+        return true
+    }
+    return false
+}
+
 export class gmoFXPublicStreamClass {
     private reconnect: boolean = true
     private ws: websocket | null = null
-    private ticker?: gmoFXPublicStreamTickerCallback
+    private callbacks: gmoFXPublicStreamCallbacks
     // WebSocket Events
     private onWebSocketOpen?: () => void
     private onWebSocketClose?: () => void
@@ -37,7 +53,7 @@ export class gmoFXPublicStreamClass {
     //
     constructor(option: gmoFXPublicStreamOption) {
         this.reconnect = option.reconnect
-        this.ticker = option.ticker
+        this.callbacks = { ticker: option.ticker }
         this.onWebSocketOpen = option.onWebSocketOpen
         this.onWebSocketClose = option.onWebSocketClose
         this.onWebSocketError = option.onWebSocketError
@@ -78,15 +94,8 @@ export class gmoFXPublicStreamClass {
         }
     }
 
-    // 外国為替FXのtickerは暗号資産と違い channel を返さないため、
-    // 配信される銘柄レートはすべて ticker として扱う。
     private onMessage = (data: websocket.RawData) => {
-        const res = JSON.parse(data.toString())
-        if (res.bid !== undefined && res.ask !== undefined) {
-            if (this.ticker) {
-                this.ticker(res as gmoFXPublicStreamTickerResponse)
-            }
-        }
+        dispatchFXPublicStreamMessage(data.toString(), this.callbacks)
     }
 
     // 再接続を止めて接続を終了する。

@@ -14,6 +14,7 @@ import {
 import {
   gmoResponse,
   gmoStatusResponse,
+  gmoSymbolResponse,
   gmoTickerResponse,
   KLine,
   OrderbooksResponse,
@@ -36,6 +37,12 @@ export class gmoPublicApiClass extends baseApiClass {
   public getTicker(params?: GetTickerRequest): Promise<gmoResponse<gmoTickerResponse[]>> {
     const path: string = '/ticker';
     return this.get(path, params || {});
+  }
+
+  // GET /public/v1/symbols
+  public getSymbols(): Promise<gmoResponse<gmoSymbolResponse[]>> {
+    const path = '/symbols';
+    return this.get(path);
   }
 
   public getOrderbooks(params: GetOrderbooksRequest): Promise<gmoResponse<OrderbooksResponse>> {

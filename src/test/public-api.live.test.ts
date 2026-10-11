@@ -1,5 +1,5 @@
 import { gmoPublicApiClass } from '../lib/public-api'
-import { gmoStatus } from '../lib/type'
+import { gmoPairs, gmoStatus } from '../lib/type'
 
 // 暗号資産のPublic APIは認証不要なので実際のAPIに接続して確認する。
 const api = new gmoPublicApiClass({})
@@ -23,6 +23,19 @@ test('getTicker', async () => {
     // FXと違い last と volume が返る
     expect(parseFloat(ticker.last)).toBeGreaterThan(0)
     expect(parseFloat(ticker.volume)).toBeGreaterThanOrEqual(0)
+})
+
+test('getSymbols: type.tsの銘柄一覧がAPIと一致している', async () => {
+    const res = await api.getSymbols()
+    expect(res.status).toBe(0)
+
+    const fromApi = res.data.map((s) => s.symbol).sort()
+    expect(fromApi).toEqual([...gmoPairs].sort())
+
+    const btc = res.data.find((s) => s.symbol === 'BTC')
+    expect(btc).toBeDefined()
+    expect(parseFloat(btc!.minOrderSize)).toBeGreaterThan(0)
+    expect(parseFloat(btc!.tickSize)).toBeGreaterThan(0)
 })
 
 test('getOrderbooks', async () => {

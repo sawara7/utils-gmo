@@ -4,21 +4,25 @@ export type gmoFXPrivateStreamExecutionCallback = (execution: gmoFXPrivateStream
 export type gmoFXPrivateStreamOrderCallback = (order: gmoFXPrivateStreamOrderResponse) => void;
 export type gmoFXPrivateStreamPositionCallback = (position: gmoFXPrivateStreamPositionResponse) => void;
 export type gmoFXPrivateStreamSummaryCallback = (summary: gmoFXPrivateStreamPositionSummaryResponse) => void;
-export type gmoFXPrivateStreamOption = {
-    reconnect: boolean;
+export type gmoFXPrivateStreamCallbacks = {
     execution?: gmoFXPrivateStreamExecutionCallback;
     order?: gmoFXPrivateStreamOrderCallback;
     position?: gmoFXPrivateStreamPositionCallback;
     summary?: gmoFXPrivateStreamSummaryCallback;
+};
+export type gmoFXPrivateStreamOption = gmoFXPrivateStreamCallbacks & {
+    reconnect: boolean;
     onWebSocketOpen?: () => void;
     onWebSocketClose?: () => void;
     onWebSocketError?: () => void;
 };
+export declare function dispatchFXPrivateStreamMessage(message: string, callbacks: gmoFXPrivateStreamCallbacks): boolean;
 export declare class gmoFXPrivateStreamClass {
     private reconnect;
     private ws;
     private api;
     private token;
+    private callbacks;
     executionCallback?: gmoFXPrivateStreamExecutionCallback;
     orderCallback?: gmoFXPrivateStreamOrderCallback;
     positionCallback?: gmoFXPrivateStreamPositionCallback;

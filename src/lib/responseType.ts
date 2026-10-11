@@ -1,4 +1,11 @@
-import { gmoStatus, MarginCallStatus } from './type';
+import {
+  gmoExecutionMsgType,
+  gmoOrderMsgType,
+  gmoPositionMsgType,
+  gmoPositionSummaryMsgType,
+  gmoStatus,
+  MarginCallStatus
+} from './type';
 
 // error message
 // エラー時はHTTP 200のまま status: 1 と messages が返るため、
@@ -31,6 +38,18 @@ export interface gmoTickerResponse {
   symbol: string;
   timestamp: string;
   volume: string;
+}
+
+// 取引ルール
+// GET /public/v1/symbols
+export interface gmoSymbolResponse {
+  symbol: string;
+  minOrderSize: string; // 最小注文数量/回
+  maxOrderSize: string; // 最大注文数量/回
+  sizeStep: string;     // 最小注文単位/回
+  tickSize: string;     // 注文価格の呼値
+  takerFee: string;
+  makerFee: string;
 }
 
 // Orderbook
@@ -186,6 +205,7 @@ export interface gmoPublicStreamTickerResponse extends gmoPublicStreamBaseRespon
   high: string;
   last: string;
   low: string;
+  volume: string; // 24時間の取引量
 }
 
 export interface gmoPublicStreamOrderBooksResponse extends gmoPublicStreamBaseResponse{
@@ -201,6 +221,7 @@ export interface gmoPublicStreamTradesResponse extends gmoPublicStreamBaseRespon
 
 export interface gmoPrivateStreamExecutionResponse extends gmoStreamBaseResponse{
   orderId: number;
+  clientOrderId?: string; // 設定した場合のみ返る
   executionId: number;
   settleType: string;
   executionType: string;
@@ -216,11 +237,12 @@ export interface gmoPrivateStreamExecutionResponse extends gmoStreamBaseResponse
   orderSize: string;
   orderExecutedSize: string;
   timeInForce: string;
-  msgType: string;
+  msgType: gmoExecutionMsgType;
 }
 
 export interface gmoPrivateStreamOrderResponse extends gmoStreamBaseResponse {
   orderId: number;
+  clientOrderId?: string; // 設定した場合のみ返る
   settleType: string;
   executionType: string;
   side: string;
@@ -232,7 +254,7 @@ export interface gmoPrivateStreamOrderResponse extends gmoStreamBaseResponse {
   orderExecutedSize: string;
   losscutPrice: string;
   timeInForce: string;
-  msgType: string;
+  msgType: gmoOrderMsgType;
 }
 
 export interface gmoPrivateStreamPositionResponse extends gmoStreamBaseResponse {
@@ -245,7 +267,7 @@ export interface gmoPrivateStreamPositionResponse extends gmoStreamBaseResponse 
   leverage: string;
   losscutPrice: string;
   timestamp: string;
-  msgType: string;
+  msgType: gmoPositionMsgType;
 }
 
 export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseResponse {
@@ -255,7 +277,7 @@ export interface gmoPrivateStreamPositionSummaryResponse extends gmoStreamBaseRe
   sumOrderQuantity: string;
   sumPositionQuantity: string;
   timestamp: string;
-  msgType: string;
+  msgType: gmoPositionSummaryMsgType;
 }
 
 export interface gmoExecutionResponseList {

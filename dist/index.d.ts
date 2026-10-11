@@ -3,6 +3,8 @@ export * from './lib/public-api';
 export * from './lib/requestType';
 export * from './lib/responseType';
 export * from './lib/websocketClient';
+export * from './lib/public-stream';
+export * from './lib/private-stream';
 export * from './lib/position';
 export * from './lib/order';
 export * from './lib/type';

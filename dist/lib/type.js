@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gmoPairs = exports.gmoWebsocketPrivateChannels = exports.gmoWebsocketPublicChannels = exports.MarginCallStatusList = exports.GMO_API_NAME = void 0;
+exports.gmoPairs = exports.gmoLeveragePairs = exports.gmoSpotPairs = exports.gmoWebsocketPrivateChannels = exports.gmoWebsocketPublicChannels = exports.MarginCallStatusList = exports.GMO_API_NAME = void 0;
 exports.GMO_API_NAME = 'gmo';
 exports.MarginCallStatusList = [
     "DEFAULT", //Trigger an Order the “natural” way: compare its price to the ask for long Orders and bid for short Orders.
@@ -20,15 +20,43 @@ exports.gmoWebsocketPrivateChannels = [
     'positionEvents',
     'positionSummaryEvents'
 ];
-exports.gmoPairs = [
+// 取扱銘柄（GET /public/v1/symbols の内容に合わせる）
+// 現物
+exports.gmoSpotPairs = [
     'BTC',
     'ETH',
     'BCH',
     'LTC',
     'XRP',
+    'XLM',
+    'DOT',
+    'ATOM',
+    'FCR',
+    'ADA',
+    'LINK',
+    'DOGE',
+    'SOL',
+    'ASTR',
+    'NAC',
+    'WILD',
+    'SUI'
+];
+// レバレッジ
+exports.gmoLeveragePairs = [
     'BTC_JPY',
     'ETH_JPY',
     'BCH_JPY',
     'LTC_JPY',
-    'XRP_JPY'
+    'XRP_JPY',
+    'DOT_JPY',
+    'ATOM_JPY',
+    'ADA_JPY',
+    'LINK_JPY',
+    'DOGE_JPY',
+    'SOL_JPY',
+    'SUI_JPY'
+];
+exports.gmoPairs = [
+    ...exports.gmoSpotPairs,
+    ...exports.gmoLeveragePairs
 ];

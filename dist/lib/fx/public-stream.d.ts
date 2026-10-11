@@ -1,17 +1,20 @@
 import { gmoFXPublicStreamTickerResponse } from './responseType';
 import { gmoFXSymbol, gmoFXWebsocketPublicChannel } from './type';
 export type gmoFXPublicStreamTickerCallback = (ticker: gmoFXPublicStreamTickerResponse) => void;
-export type gmoFXPublicStreamOption = {
-    reconnect: boolean;
+export type gmoFXPublicStreamCallbacks = {
     ticker?: gmoFXPublicStreamTickerCallback;
+};
+export type gmoFXPublicStreamOption = gmoFXPublicStreamCallbacks & {
+    reconnect: boolean;
     onWebSocketOpen?: () => void;
     onWebSocketClose?: () => void;
     onWebSocketError?: () => void;
 };
+export declare function dispatchFXPublicStreamMessage(message: string, callbacks: gmoFXPublicStreamCallbacks): boolean;
 export declare class gmoFXPublicStreamClass {
     private reconnect;
     private ws;
-    private ticker?;
+    private callbacks;
     private onWebSocketOpen?;
     private onWebSocketClose?;
     private onWebSocketError?;

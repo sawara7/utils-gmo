@@ -41,17 +41,64 @@ export const gmoWebsocketPrivateChannels = [
 ] as const;
 export type gmoWebsocketPrivateChannel = typeof gmoWebsocketPrivateChannels[number];
 
-export const gmoPairs = [
+// 取扱銘柄（GET /public/v1/symbols の内容に合わせる）
+// 現物
+export const gmoSpotPairs = [
   'BTC',
   'ETH',
   'BCH',
   'LTC',
   'XRP',
+  'XLM',
+  'DOT',
+  'ATOM',
+  'FCR',
+  'ADA',
+  'LINK',
+  'DOGE',
+  'SOL',
+  'ASTR',
+  'NAC',
+  'WILD',
+  'SUI'
+] as const;
+export type gmoSpotPair = typeof gmoSpotPairs[number];
+
+// レバレッジ
+export const gmoLeveragePairs = [
   'BTC_JPY',
   'ETH_JPY',
   'BCH_JPY',
   'LTC_JPY',
-  'XRP_JPY'
+  'XRP_JPY',
+  'DOT_JPY',
+  'ATOM_JPY',
+  'ADA_JPY',
+  'LINK_JPY',
+  'DOGE_JPY',
+  'SOL_JPY',
+  'SUI_JPY'
+] as const;
+export type gmoLeveragePair = typeof gmoLeveragePairs[number];
+
+export const gmoPairs = [
+  ...gmoSpotPairs,
+  ...gmoLeveragePairs
 ] as const;
 export type gmoPair = typeof gmoPairs[number];
 
+
+// tradesチャンネルのみ指定可能。指定するとTakerのデータのみ配信される。
+export type gmoTradesOption = 'TAKER_ONLY';
+
+// positionSummaryEventsチャンネルのみ指定可能。指定すると5秒ごとに配信される。
+export type gmoPositionSummaryOption = 'PERIODIC';
+
+// 約定情報通知のメッセージタイプ
+export type gmoExecutionMsgType = 'ER';
+// 注文情報通知のメッセージタイプ: 新規 / 変更 / 取消 / 約定
+export type gmoOrderMsgType = 'NOR' | 'ROR' | 'COR' | 'ER';
+// ポジション情報通知のメッセージタイプ: 新規 / 更新 / ロスカット / 削除
+export type gmoPositionMsgType = 'OPR' | 'UPR' | 'ULR' | 'CPR';
+// ポジションサマリー情報通知のメッセージタイプ
+export type gmoPositionSummaryMsgType = 'INIT' | 'UPDATE' | 'PERIODIC';

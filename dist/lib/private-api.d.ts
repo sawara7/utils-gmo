@@ -10,6 +10,7 @@ export declare class gmoPrivateApiClass extends baseApiClass {
     constructor(config: GMOApiConfig, options?: ApiOptions);
     getWebsocketAccessToken(): Promise<gmoResponse<string>>;
     updateWebsocketAccessToken(request: string): Promise<gmoResponse<void>>;
+    deleteWebsocketAccessToken(token: string): Promise<gmoResponse<void>>;
     getMargin(): Promise<gmoResponse<GetMarginResponse>>;
     getAssets(): Promise<gmoResponse<GetAssetsResponse[]>>;
     getTradingVolume(): Promise<gmoResponse<GetTradingVolumeResponse>>;
@@ -25,6 +26,7 @@ export declare class gmoPrivateApiClass extends baseApiClass {
     getOrders(orderIds: string[]): Promise<gmoResponse<OrdersResponse>>;
     get<T>(path: string, query?: {}): Promise<any>;
     post<T>(path: string, query: {}): Promise<any>;
+    delete<T>(path: string, query: {}): Promise<any>;
     put<T>(path: string, query: {}): Promise<any>;
     private makeHeader;
 }

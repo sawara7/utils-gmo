@@ -15,6 +15,8 @@ GMOコインのAPIクライアント（TypeScript）。暗号資産と外国為�
 - 外国為替FX: `https://forex-api.coin.z.com` / `wss://forex-api.coin.z.com`（[ドキュメント](https://api.coin.z.com/fxdocs/)）
 
 エラー時もHTTPは200で返り `status: 1` と `messages` が入るため、呼び出し側で `status === 0` を確認する。
+暗号資産とFXでクラスの形は揃えてあり、どちらも `subscribe` / `unsubscribe` / `close` を持ち、
+`subscribe` の1秒1回制限はクラス側で吸収する。
 
 ## インストール
 
@@ -24,6 +26,45 @@ npm install github:sawara7/utils-gmo#v0.1.0
 
 タグを付けずに指定するとmainのHEADを取得するため、botから使う場合はタグで固定する。
 インストール時に `prepare` スクリプトで `dist` がビルドされる。
+
+## 暗号資産 WebSocket
+
+```ts
+import { gmoPublicStreamClass, gmoPrivateStreamAPIClass } from 'utils-gmo'
+
+// Public: 最新レート・板情報・取引履歴
+const publicStream = new gmoPublicStreamClass({
+  reconnect: true,
+  ticker: (t) => console.log(t.symbol, t.bid, t.ask, t.last, t.volume),
+  orderbooks: (o) => console.log(o.asks[0], o.bids[0]),
+  trades: (t) => console.log(t.price, t.side, t.size),
+  onWebSocketOpen: async () => {
+    await publicStream.subscribe('ticker', 'BTC')
+    await publicStream.subscribe('orderbooks', 'BTC')
+    await publicStream.subscribe('trades', 'BTC', 'TAKER_ONLY') // Takerのみ配信
+  }
+})
+
+// Private: 約定・注文・建玉・建玉サマリー
+const privateStream = new gmoPrivateStreamAPIClass('YOUR_KEY', 'YOUR_SECRET', {
+  reconnect: true,
+  execution: (e) => console.log(e.executionId, e.executionPrice),
+  order: (o) => console.log(o.orderId, o.orderStatus),
+  position: (p) => console.log(p.positionId, p.lossGain),
+  summary: (s) => console.log(s.symbol, s.side, s.sumPositionQuantity),
+  onWebSocketOpen: async () => {
+    await privateStream.subscribe('executionEvents')
+    await privateStream.subscribe('orderEvents')
+    await privateStream.subscribe('positionSummaryEvents', 'PERIODIC') // 5秒ごとに配信
+  }
+})
+```
+
+- `trades` の `TAKER_ONLY` と `positionSummaryEvents` の `PERIODIC` は暗号資産側だけのオプション。
+- 銘柄は `gmoSpotPairs`（現物17銘柄）と `gmoLeveragePairs`（レバレッジ12銘柄）、
+  その合計が `gmoPairs`。
+- Privateはアクセストークン（有効期限60分）を自動で取得し、30分ごとに延長する。
+  `close()` でトークンを削除して終了できる。
 
 ## 外国為替FX Public API
 
@@ -188,8 +229,10 @@ npm run test:live  # 実際のGMOコインのAPIに接続する
 
 - `*.test.ts` — ネットワーク不要。Private APIは発注してしまわないよう、送信直前のリクエストを
   `optionsCallback` で差し押さえ、パス・メソッド・クエリ・署名だけを検証する。
-- `*.live.test.ts` — 実APIに接続する。FXの `getSymbols` は `fx/type.ts` の銘柄一覧とAPIの一覧が
-  一致しているかを検証するので、GMOコインが銘柄を追加したらここで落ちる。
+  WebSocketの受信メッセージの振り分けは `dispatch*StreamMessage` として関数に切り出してあり、
+  ドキュメントのResponse exampleを入力にして検証する。
+- `*.live.test.ts` — 実APIに接続する。`getSymbols` は `type.ts` / `fx/type.ts` の銘柄一覧とAPIの
+  一覧が一致しているかを検証するので、GMOコインが銘柄を追加したらここで落ちる。
   CIでは毎朝（07:00 JST）走らせてAPI変更を検知する。
 
 FXのPrivate WebSocketと、Private APIの実接続はAPIキーが必要なためテストしていない。

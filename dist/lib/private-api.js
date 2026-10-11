@@ -43,6 +43,11 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
         const path = '/v1/ws-auth';
         return this.put(path, { token: request });
     }
+    // DELETE /private/v1/ws-auth
+    deleteWebsocketAccessToken(token) {
+        const path = '/v1/ws-auth';
+        return this.delete(path, { token: token });
+    }
     // GET /private/v1/account/assets
     getMargin() {
         const path = '/v1/account/margin';
@@ -129,6 +134,17 @@ class gmoPrivateApiClass extends api_1.baseApiClass {
             console.log(data);
         }
         return super.post(path, query, headers);
+    }
+    // PUT / DELETE はボディを送るが、公式サンプルどおり署名には含めない。
+    delete(path, query) {
+        const headers = this.makeHeader('DELETE', path, '');
+        if (this.debug) {
+            console.log('DELETE');
+            console.log(path);
+            console.log(headers);
+            console.log(query);
+        }
+        return this.request('DELETE', path, undefined, query, headers);
     }
     put(path, query) {
         // const data = JSON.stringify(query);

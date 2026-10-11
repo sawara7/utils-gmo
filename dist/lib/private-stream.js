@@ -12,15 +12,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gmoPrivateStreamAPIClass = void 0;
+exports.gmoPrivateStreamAPIClass = exports.dispatchPrivateStreamMessage = void 0;
 const ws_1 = __importDefault(require("ws"));
+const utils_general_1 = require("utils-general");
 const private_api_1 = require("./private-api");
 const PATH = "wss://api.coin.z.com/ws/private/v1/";
+// 同一IPからの subscribe / unsubscribe は1秒1回が上限。
+const SUBSCRIBE_INTERVAL = 1000;
+// アクセストークンの有効期限は60分。切れる前に延長する。
+const TOKEN_UPDATE_INTERVAL = 30 * 60 * 1000;
+// 受信メッセージの振り分け。テストしやすいようにクラスから切り出している。
+// 対応するチャンネルを処理した場合に true を返す。
+function dispatchPrivateStreamMessage(message, callbacks) {
+    const res = JSON.parse(message);
+    if (res.channel === 'executionEvents') {
+        if (callbacks.execution) {
+            callbacks.execution(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'orderEvents') {
+        if (callbacks.order) {
+            callbacks.order(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'positionEvents') {
+        if (callbacks.position) {
+            callbacks.position(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'positionSummaryEvents') {
+        if (callbacks.summary) {
+            callbacks.summary(res);
+        }
+        return true;
+    }
+    return false;
+}
+exports.dispatchPrivateStreamMessage = dispatchPrivateStreamMessage;
 class gmoPrivateStreamAPIClass {
     constructor(apiKey, apiSecret, option) {
         this.reconnect = true;
         this.ws = null;
         this.token = '';
+        this.sendQueue = Promise.resolve();
+        this.lastSendTime = 0;
+        // サーバーから1分に1回pingが来る。3回連続で応答しないと切断される。
         this.onPing = () => {
             var _a;
             (_a = this.ws) === null || _a === void 0 ? void 0 : _a.pong();
@@ -44,31 +83,7 @@ class gmoPrivateStreamAPIClass {
             }
         };
         this.onMessage = (data) => {
-            const res = JSON.parse(data.toString());
-            if (res.channel === 'executionEvents') {
-                if (this.executionCallback) {
-                    this.executionCallback(res);
-                }
-                ;
-            }
-            else if (res.channel === 'orderEvents') {
-                if (this.orderCallback) {
-                    this.orderCallback(res);
-                }
-                ;
-            }
-            else if (res.channel === 'positionEvents') {
-                if (this.positionCallback) {
-                    this.positionCallback(res);
-                }
-                ;
-            }
-            else if (res.channel === 'positionSummary') {
-                if (this.summaryCallback) {
-                    this.summaryCallback(res);
-                }
-                ;
-            }
+            dispatchPrivateStreamMessage(data.toString(), this.callbacks);
         };
         this.api = new private_api_1.gmoPrivateApiClass({
             apiKey: apiKey,
@@ -79,6 +94,20 @@ class gmoPrivateStreamAPIClass {
         this.orderCallback = option.order;
         this.positionCallback = option.position;
         this.summaryCallback = option.summary;
+        this.callbacks = {
+            execution: (res) => { if (this.executionCallback) {
+                this.executionCallback(res);
+            } },
+            order: (res) => { if (this.orderCallback) {
+                this.orderCallback(res);
+            } },
+            position: (res) => { if (this.positionCallback) {
+                this.positionCallback(res);
+            } },
+            summary: (res) => { if (this.summaryCallback) {
+                this.summaryCallback(res);
+            } }
+        };
         this.onWebSocketOpen = option.onWebSocketOpen;
         this.onWebSocketClose = option.onWebSocketClose;
         this.onWebSocketError = option.onWebSocketError;
@@ -97,7 +126,7 @@ class gmoPrivateStreamAPIClass {
             this.token = res.data;
             this.intervalID = setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 yield this.api.updateWebsocketAccessToken(this.token);
-            }), 30 * 60 * 1000);
+            }), TOKEN_UPDATE_INTERVAL);
             this.ws = new ws_1.default(PATH + this.token);
             this.ws.on("open", this.onOpen);
             this.ws.on("close", this.onClose);
@@ -106,13 +135,51 @@ class gmoPrivateStreamAPIClass {
             this.ws.on("message", this.onMessage);
         });
     }
-    subscribe(channel) {
-        if (this.ws) {
-            this.ws.send(JSON.stringify({
-                "command": "subscribe",
-                "channel": channel,
-            }));
+    // アクセストークンを削除して接続を終了する。
+    close() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            this.reconnect = false;
+            if (this.intervalID) {
+                clearInterval(this.intervalID);
+                this.intervalID = undefined;
+            }
+            (_a = this.ws) === null || _a === void 0 ? void 0 : _a.close();
+            if (this.token) {
+                yield this.api.deleteWebsocketAccessToken(this.token);
+                this.token = '';
+            }
+        });
+    }
+    // option: 'PERIODIC' は positionSummaryEvents のみ指定可能（5秒ごとに配信）。
+    subscribe(channel, option) {
+        const message = {
+            "command": "subscribe",
+            "channel": channel
+        };
+        if (option) {
+            Object.assign(message, { "option": option });
         }
+        return this.send(message);
+    }
+    unsubscribe(channel) {
+        return this.send({
+            "command": "unsubscribe",
+            "channel": channel
+        });
+    }
+    // 1秒1回の制限を守るため、送信を直列化して間隔を空ける。
+    send(message) {
+        this.sendQueue = this.sendQueue.then(() => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const wait = SUBSCRIBE_INTERVAL - (Date.now() - this.lastSendTime);
+            if (wait > 0) {
+                yield (0, utils_general_1.sleep)(wait);
+            }
+            this.lastSendTime = Date.now();
+            (_a = this.ws) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify(message));
+        }));
+        return this.sendQueue;
     }
 }
 exports.gmoPrivateStreamAPIClass = gmoPrivateStreamAPIClass;

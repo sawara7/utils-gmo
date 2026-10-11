@@ -12,12 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gmoFXPublicStreamClass = void 0;
+exports.gmoFXPublicStreamClass = exports.dispatchFXPublicStreamMessage = void 0;
 const ws_1 = __importDefault(require("ws"));
 const utils_general_1 = require("utils-general");
 const PATH = 'wss://forex-api.coin.z.com/ws/public/v1';
 // 同一IPからの subscribe / unsubscribe は1秒1回が上限。
 const SUBSCRIBE_INTERVAL = 1000;
+// 受信メッセージの振り分け。テストしやすいようにクラスから切り出している。
+// 外国為替FXのtickerは暗号資産と違い channel を返さないため、
+// bid / ask を持つメッセージを ticker として扱う。
+// 対応するメッセージを処理した場合に true を返す。
+function dispatchFXPublicStreamMessage(message, callbacks) {
+    const res = JSON.parse(message);
+    if (res.bid !== undefined && res.ask !== undefined) {
+        if (callbacks.ticker) {
+            callbacks.ticker(res);
+        }
+        return true;
+    }
+    return false;
+}
+exports.dispatchFXPublicStreamMessage = dispatchFXPublicStreamMessage;
 class gmoFXPublicStreamClass {
     //
     constructor(option) {
@@ -48,18 +63,11 @@ class gmoFXPublicStreamClass {
                 this.onWebSocketError();
             }
         };
-        // 外国為替FXのtickerは暗号資産と違い channel を返さないため、
-        // 配信される銘柄レートはすべて ticker として扱う。
         this.onMessage = (data) => {
-            const res = JSON.parse(data.toString());
-            if (res.bid !== undefined && res.ask !== undefined) {
-                if (this.ticker) {
-                    this.ticker(res);
-                }
-            }
+            dispatchFXPublicStreamMessage(data.toString(), this.callbacks);
         };
         this.reconnect = option.reconnect;
-        this.ticker = option.ticker;
+        this.callbacks = { ticker: option.ticker };
         this.onWebSocketOpen = option.onWebSocketOpen;
         this.onWebSocketClose = option.onWebSocketClose;
         this.onWebSocketError = option.onWebSocketError;

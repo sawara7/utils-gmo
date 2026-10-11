@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gmoFXPrivateStreamClass = void 0;
+exports.gmoFXPrivateStreamClass = exports.dispatchFXPrivateStreamMessage = void 0;
 const ws_1 = __importDefault(require("ws"));
 const utils_general_1 = require("utils-general");
 const private_api_1 = require("./private-api");
@@ -21,6 +21,37 @@ const PATH = 'wss://forex-api.coin.z.com/ws/private/v1/';
 const SUBSCRIBE_INTERVAL = 1000;
 // アクセストークンの有効期限は60分。切れる前に延長する。
 const TOKEN_UPDATE_INTERVAL = 30 * 60 * 1000;
+// 受信メッセージの振り分け。テストしやすいようにクラスから切り出している。
+// 対応するチャンネルを処理した場合に true を返す。
+function dispatchFXPrivateStreamMessage(message, callbacks) {
+    const res = JSON.parse(message);
+    if (res.channel === 'executionEvents') {
+        if (callbacks.execution) {
+            callbacks.execution(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'orderEvents') {
+        if (callbacks.order) {
+            callbacks.order(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'positionEvents') {
+        if (callbacks.position) {
+            callbacks.position(res);
+        }
+        return true;
+    }
+    else if (res.channel === 'positionSummaryEvents') {
+        if (callbacks.summary) {
+            callbacks.summary(res);
+        }
+        return true;
+    }
+    return false;
+}
+exports.dispatchFXPrivateStreamMessage = dispatchFXPrivateStreamMessage;
 class gmoFXPrivateStreamClass {
     constructor(apiKey, apiSecret, option) {
         this.reconnect = true;
@@ -52,27 +83,7 @@ class gmoFXPrivateStreamClass {
             }
         };
         this.onMessage = (data) => {
-            const res = JSON.parse(data.toString());
-            if (res.channel === 'executionEvents') {
-                if (this.executionCallback) {
-                    this.executionCallback(res);
-                }
-            }
-            else if (res.channel === 'orderEvents') {
-                if (this.orderCallback) {
-                    this.orderCallback(res);
-                }
-            }
-            else if (res.channel === 'positionEvents') {
-                if (this.positionCallback) {
-                    this.positionCallback(res);
-                }
-            }
-            else if (res.channel === 'positionSummaryEvents') {
-                if (this.summaryCallback) {
-                    this.summaryCallback(res);
-                }
-            }
+            dispatchFXPrivateStreamMessage(data.toString(), this.callbacks);
         };
         this.api = new private_api_1.gmoFXPrivateApiClass({
             apiKey: apiKey,
@@ -83,6 +94,20 @@ class gmoFXPrivateStreamClass {
         this.orderCallback = option.order;
         this.positionCallback = option.position;
         this.summaryCallback = option.summary;
+        this.callbacks = {
+            execution: (res) => { if (this.executionCallback) {
+                this.executionCallback(res);
+            } },
+            order: (res) => { if (this.orderCallback) {
+                this.orderCallback(res);
+            } },
+            position: (res) => { if (this.positionCallback) {
+                this.positionCallback(res);
+            } },
+            summary: (res) => { if (this.summaryCallback) {
+                this.summaryCallback(res);
+            } }
+        };
         this.onWebSocketOpen = option.onWebSocketOpen;
         this.onWebSocketClose = option.onWebSocketClose;
         this.onWebSocketError = option.onWebSocketError;

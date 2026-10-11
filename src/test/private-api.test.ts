@@ -80,9 +80,15 @@ test('POST: アクセストークン取得は空ボディ', async () => {
     expectSigned(options, 'POST', '/v1/ws-auth', '{}')
 })
 
-// 公式サンプル（Node.js）もPUTはボディを署名に含めていないため、この挙動が正しい
+// 公式サンプル（Node.js）もPUT/DELETEはボディを署名に含めていないため、この挙動が正しい
 test('PUT: アクセストークン延長はボディを署名に含めない', async () => {
     const options = await capture(() => api.updateWebsocketAccessToken('dummy-token'))
     expect(options.data).toEqual({ token: 'dummy-token' })
     expectSigned(options, 'PUT', '/v1/ws-auth', '')
+})
+
+test('DELETE: アクセストークン削除はボディを署名に含めない', async () => {
+    const options = await capture(() => api.deleteWebsocketAccessToken('dummy-token'))
+    expect(options.data).toEqual({ token: 'dummy-token' })
+    expectSigned(options, 'DELETE', '/v1/ws-auth', '')
 })
